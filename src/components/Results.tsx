@@ -4,7 +4,7 @@ interface ResultsProps {
   data: DataType[];
 }
 const Results = ({ data }: ResultsProps) => {
-  const dataArray = data.map(({ name, description }) => (
+  const dataList = data.map(({ name, description }) => (
     <li key={name}>
       <p>{name}</p>
       <p>{description}</p>
@@ -16,7 +16,7 @@ const Results = ({ data }: ResultsProps) => {
         <p>Name</p>
         <p>Description</p>
       </div>
-      <ul>{dataArray}</ul>
+      <ul>{dataList}</ul>
     </div>
   );
 };

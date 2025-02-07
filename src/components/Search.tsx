@@ -1,29 +1,40 @@
-import { ChangeEvent, FormEvent, useState } from 'react';
+import { ChangeEvent, FormEvent } from 'react';
 import { getData, getDataByQuery } from '../api/getData';
-import Button from './Button';
+import { transformData } from '../utils/transformData';
 import { DataType } from '../types';
+import Button from './Button';
 
 interface SearchProps {
   query: string | null;
   onQueryChange: (e: ChangeEvent<HTMLInputElement>) => void;
   setData: (res: DataType[]) => void;
+  loadingSearch: boolean;
+  setLoadingSearch: (load: boolean) => void;
+  setCurrentPage: (page: number) => void;
 }
 
-const Search = ({ query, onQueryChange, setData }: SearchProps) => {
-  const [loading, setLoading] = useState(false);
-
+const Search = ({
+  query,
+  onQueryChange,
+  setData,
+  loadingSearch,
+  setLoadingSearch,
+  setCurrentPage,
+}: SearchProps) => {
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    setLoading(true);
     e.preventDefault();
+    setLoadingSearch(true);
     let res: DataType[] = [];
     if (query) {
       res = await getDataByQuery(query);
       localStorage.setItem('query', query);
     } else {
-      res = await getData();
+      const response = await getData(1);
+      setCurrentPage(1);
+      res = transformData(response.results);
     }
     setData(res);
-    setLoading(false);
+    setLoadingSearch(false);
   };
 
   return (
@@ -34,7 +45,7 @@ const Search = ({ query, onQueryChange, setData }: SearchProps) => {
           defaultValue={query || undefined}
           onChange={onQueryChange}
         />
-        <Button type="submit" loading={loading}>
+        <Button type="submit" loading={loadingSearch}>
           Search
         </Button>
       </form>

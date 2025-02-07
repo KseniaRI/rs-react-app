@@ -1,36 +1,60 @@
-import { ChangeEvent, useState } from 'react';
+import { useData } from './hooks/useData';
 import Search from './components/Search';
 import Results from './components/Results';
 import Button from './components/Button';
-import { DataType } from './types';
-import './App.css';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import Pagination from './components/Pagination';
+import Fallback from './components/Fallback';
+import './App.css';
 
 function App() {
-  const [query, setQuery] = useState<string | null>(
-    localStorage.getItem('query')
-  );
-  const [data, setData] = useState<DataType[]>([]);
+  const {
+    query,
+    onQueryChange,
+    data,
+    setData,
+    loadingSearch,
+    setLoadingSearch,
+    currentPage,
+    setCurrentPage,
+    nextPage,
+    prevPage,
+    loadingNext,
+    loadingPrev,
+    changeCurrentPage,
+  } = useData();
 
-  const handleErrorButtonClick = () => {
+  const handleErrorButtonClick = async () => {
     throw new Error('Generated error');
   };
+
+  const showPagination = data.length > 1 && !query;
+
   return (
-    <>
-      <ErrorBoundary fallback={<p>Something went wrong</p>}>
-        <Search
-          query={query}
-          onQueryChange={(e: ChangeEvent<HTMLInputElement>) =>
-            setQuery(e.target.value.trim())
-          }
-          setData={setData}
+    <ErrorBoundary fallback={<Fallback />}>
+      <Search
+        query={query}
+        onQueryChange={onQueryChange}
+        setData={setData}
+        loadingSearch={loadingSearch}
+        setLoadingSearch={setLoadingSearch}
+        setCurrentPage={setCurrentPage}
+      />
+      <Results data={data} />
+      {showPagination && (
+        <Pagination
+          loadingNext={loadingNext}
+          loadingPrev={loadingPrev}
+          currentPage={currentPage}
+          changeCurrentPage={changeCurrentPage}
+          nextPage={nextPage}
+          prevPage={prevPage}
         />
-        <Results data={data} />
-        <Button type="submit" onClick={handleErrorButtonClick}>
-          Error
-        </Button>
-      </ErrorBoundary>
-    </>
+      )}
+      <Button type="submit" onClick={handleErrorButtonClick}>
+        Error
+      </Button>
+    </ErrorBoundary>
   );
 }
 

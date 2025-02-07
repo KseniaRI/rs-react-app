@@ -1,19 +1,16 @@
 import { DataType } from '../types';
+import { transformData } from '../utils/transformData';
 
-export const getData = async (): Promise<DataType[]> => {
+export const getData = async (currentPage: number) => {
   try {
-    const response = await fetch('https://swapi.dev/api/films/?page=2');
+    const response = await fetch(
+      `https://swapi.dev/api/planets/?page=${currentPage}`
+    );
     if (!response.ok) {
       throw new Error('Something went wrong, impossible get data');
     }
     const data = await response.json();
-    const result = data.results.map(
-      ({ title, opening_crawl }: { title: string; opening_crawl: string }) => ({
-        name: title,
-        description: opening_crawl,
-      })
-    );
-    return result;
+    return data;
   } catch (error) {
     console.log('/ ~ getData ~ error:', error);
   }
@@ -23,7 +20,7 @@ export const getData = async (): Promise<DataType[]> => {
 export const getDataByQuery = async (query: string): Promise<DataType[]> => {
   try {
     const response = await fetch(
-      `https://swapi.dev/api/films/?search=${query}`
+      `https://swapi.dev/api/planets/?search=${query}`
     );
     if (!response.ok) {
       throw new Error(
@@ -31,12 +28,7 @@ export const getDataByQuery = async (query: string): Promise<DataType[]> => {
       );
     }
     const data = await response.json();
-    const result = data.results.map(
-      ({ title, opening_crawl }: { title: string; opening_crawl: string }) => ({
-        name: title,
-        description: opening_crawl,
-      })
-    );
+    const result = transformData(data.results);
     return result;
   } catch (error) {
     console.log('/ ~ error:', error);
