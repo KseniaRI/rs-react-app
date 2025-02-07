@@ -3,7 +3,7 @@ import { getData, getDataByQuery } from '../api/getData';
 import { transformData } from '../utils/transformData';
 import { DataType } from '../types';
 import Button from './Button';
-import { SetURLSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 
 interface SearchProps {
   query: string | null;
@@ -11,8 +11,6 @@ interface SearchProps {
   setData: (res: DataType[]) => void;
   loadingSearch: boolean;
   setLoadingSearch: (load: boolean) => void;
-  setCurrentPage: (page: number) => void;
-  setSearchParams: SetURLSearchParams;
 }
 
 const Search = ({
@@ -21,9 +19,8 @@ const Search = ({
   setData,
   loadingSearch,
   setLoadingSearch,
-  setCurrentPage,
-  setSearchParams,
 }: SearchProps) => {
+  const [, setSearchParams] = useSearchParams();
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoadingSearch(true);
@@ -33,7 +30,6 @@ const Search = ({
       localStorage.setItem('query', query);
     } else {
       const response = await getData(1);
-      setCurrentPage(1);
       setSearchParams({ page: '1' });
       res = transformData(response.results);
     }

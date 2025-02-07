@@ -5,21 +5,21 @@ import { transformData } from '../utils/transformData';
 import { useSearchParams } from 'react-router-dom';
 
 export const useData = () => {
-  const [data, setData] = useState<DataType[]>([]);
-  const [query, setQuery] = useState<string | null>(
-    localStorage.getItem('query')
-  );
   const [searchParams, setSearchParams] = useSearchParams();
-  const initialPage = Number(searchParams.get('page')) || 0;
-  const [currentPage, setCurrentPage] = useState(initialPage);
+  const currentPage = Number(searchParams.get('page')) || 0;
+
+  const [data, setData] = useState<DataType[]>([]);
+  const initialQuery = !currentPage ? localStorage.getItem('query') : null;
+  const [query, setQuery] = useState<string | null>(initialQuery);
+
   const [nextPage, setNextPage] = useState('');
   const [prevPage, setPrevPage] = useState('');
+
   const [loadingSearch, setLoadingSearch] = useState(false);
   const [loadingNext, setLoadingNext] = useState(false);
   const [loadingPrev, setLoadingPrev] = useState(false);
 
   const changeCurrentPage = (page: number) => {
-    setCurrentPage(page);
     setSearchParams({ page: page.toString() });
     if (page > currentPage) {
       setLoadingNext(true);
@@ -57,13 +57,10 @@ export const useData = () => {
     setData,
     loadingSearch,
     setLoadingSearch,
-    currentPage,
-    setCurrentPage,
     nextPage,
     prevPage,
     loadingNext,
     loadingPrev,
     changeCurrentPage,
-    setSearchParams,
   };
 };

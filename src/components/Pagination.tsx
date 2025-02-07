@@ -1,9 +1,9 @@
+import { useSearchParams } from 'react-router-dom';
 import Button from './Button';
 
 interface PaginationProps {
   loadingNext: boolean;
   loadingPrev: boolean;
-  currentPage: number;
   prevPage: string;
   nextPage: string;
   changeCurrentPage: (page: number) => void;
@@ -11,11 +11,12 @@ interface PaginationProps {
 const Pagination = ({
   loadingNext,
   loadingPrev,
-  currentPage,
   prevPage,
   nextPage,
   changeCurrentPage,
 }: PaginationProps) => {
+  const [searchParams] = useSearchParams();
+  const currentPage = Number(searchParams.get('page'));
   return (
     <div>
       <Button
