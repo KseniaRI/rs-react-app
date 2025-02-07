@@ -22,6 +22,7 @@ function App() {
     loadingNext,
     loadingPrev,
     changeCurrentPage,
+    setSearchParams,
   } = useData();
 
   const handleErrorButtonClick = async () => {
@@ -39,6 +40,7 @@ function App() {
         loadingSearch={loadingSearch}
         setLoadingSearch={setLoadingSearch}
         setCurrentPage={setCurrentPage}
+        setSearchParams={setSearchParams}
       />
       <Results data={data} />
       {showPagination && (

@@ -2,13 +2,16 @@ import { ChangeEvent, useEffect, useState } from 'react';
 import { DataType } from '../types';
 import { getData } from '../api/getData';
 import { transformData } from '../utils/transformData';
+import { useSearchParams } from 'react-router-dom';
 
 export const useData = () => {
   const [data, setData] = useState<DataType[]>([]);
   const [query, setQuery] = useState<string | null>(
     localStorage.getItem('query')
   );
-  const [currentPage, setCurrentPage] = useState(0);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialPage = Number(searchParams.get('page')) || 0;
+  const [currentPage, setCurrentPage] = useState(initialPage);
   const [nextPage, setNextPage] = useState('');
   const [prevPage, setPrevPage] = useState('');
   const [loadingSearch, setLoadingSearch] = useState(false);
@@ -17,6 +20,7 @@ export const useData = () => {
 
   const changeCurrentPage = (page: number) => {
     setCurrentPage(page);
+    setSearchParams({ page: page.toString() });
     if (page > currentPage) {
       setLoadingNext(true);
     } else {
@@ -60,5 +64,6 @@ export const useData = () => {
     loadingNext,
     loadingPrev,
     changeCurrentPage,
+    setSearchParams,
   };
 };
