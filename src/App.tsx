@@ -6,7 +6,6 @@ import './App.css';
 import { Route, Routes } from 'react-router-dom';
 import Details from './components/details/Details';
 import Button from './components/button/Button';
-import { useEffect, useState } from 'react';
 import { useError } from './hooks/useError';
 
 function App() {
