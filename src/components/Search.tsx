@@ -26,7 +26,8 @@ const Search = ({
     setLoadingSearch(true);
     let res: DataType[] = [];
     if (query) {
-      res = await getDataByQuery(query);
+      const response = await getDataByQuery(query);
+      res = transformData(response.results);
       localStorage.setItem('query', query);
     } else {
       const response = await getData(1);

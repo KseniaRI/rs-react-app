@@ -6,6 +6,8 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import Pagination from './components/Pagination';
 import Fallback from './components/Fallback';
 import './App.css';
+import { Route, Routes } from 'react-router-dom';
+import Details from './components/Details';
 
 function App() {
   const {
@@ -22,7 +24,7 @@ function App() {
     changeCurrentPage,
   } = useData();
 
-  const handleErrorButtonClick = async () => {
+  const handleErrorButtonClick = () => {
     throw new Error('Generated error');
   };
 
@@ -37,7 +39,12 @@ function App() {
         loadingSearch={loadingSearch}
         setLoadingSearch={setLoadingSearch}
       />
-      <Results data={data} />
+      <Routes>
+        <Route path="/" element={<Results data={data} />}>
+          <Route path="planet" element={<Details />} />
+        </Route>
+      </Routes>
+
       {showPagination && (
         <Pagination
           loadingNext={loadingNext}

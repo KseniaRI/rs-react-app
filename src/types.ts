@@ -8,7 +8,11 @@ export interface ExtractedData {
 }
 
 export interface Planet {
+  climate: string;
+  diameter: string;
+  gravity: string;
   name: string;
   terrain: string;
-  climate: string;
+  orbital_period: string;
+  population: string;
 }
