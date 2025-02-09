@@ -1,13 +1,13 @@
 import { useData } from './hooks/useData';
 import Search from './components/search/Search';
 import Results from './components/results/Results';
-import { ErrorBoundary } from './components/ErrorBoundary';
 import Pagination from './components/pagination/Pagination';
-import Fallback from './components/Fallback';
 import './App.css';
 import { Route, Routes } from 'react-router-dom';
 import Details from './components/details/Details';
 import Button from './components/button/Button';
+import { useEffect, useState } from 'react';
+import { useError } from './hooks/useError';
 
 function App() {
   const {
@@ -23,15 +23,11 @@ function App() {
     loadingPrev,
     changeCurrentPage,
   } = useData();
-
-  const handleErrorButtonClick = () => {
-    throw new Error('Generated error');
-  };
-
+  const { setError } = useError();
   const showPagination = data.length > 1 && !query;
 
   return (
-    <ErrorBoundary fallback={<Fallback />}>
+    <>
       <Search
         query={query}
         onQueryChange={onQueryChange}
@@ -54,10 +50,10 @@ function App() {
           prevPage={prevPage}
         />
       )}
-      <Button type="submit" onClick={handleErrorButtonClick}>
+      <Button type="button" onClick={() => setError(true)}>
         Error
       </Button>
-    </ErrorBoundary>
+    </>
   );
 }
 
