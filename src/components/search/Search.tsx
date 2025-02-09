@@ -1,9 +1,10 @@
 import { ChangeEvent, FormEvent } from 'react';
-import { getData, getDataByQuery } from '../api/getData';
-import { transformData } from '../utils/transformData';
-import { DataType } from '../types';
-import Button from './Button';
+import { getData, getDataByQuery } from '../../api/getData';
+import { transformData } from '../../utils/transformData';
+import { DataType } from '../../types';
 import { useSearchParams } from 'react-router-dom';
+import Button from '../button/Button';
+import styles from './Search.module.css';
 
 interface SearchProps {
   query: string | null;
@@ -39,18 +40,17 @@ const Search = ({
   };
 
   return (
-    <div>
-      <form onSubmit={onSubmit}>
-        <input
-          type="text"
-          defaultValue={query || undefined}
-          onChange={onQueryChange}
-        />
-        <Button type="submit" loading={loadingSearch}>
-          Search
-        </Button>
-      </form>
-    </div>
+    <form onSubmit={onSubmit} className={styles.searchForm}>
+      <input
+        className={styles.searchInput}
+        type="text"
+        defaultValue={query || undefined}
+        onChange={onQueryChange}
+      />
+      <Button type="submit" loading={loadingSearch}>
+        Search
+      </Button>
+    </form>
   );
 };
 

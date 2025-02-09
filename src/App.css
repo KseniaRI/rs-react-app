@@ -1,41 +1,32 @@
+@import 'normalize.css';
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+p,
+h1,
+h2,
+h3 {
+  margin: 0;
+}
 #root {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
-}
-.mainButton {
-  width: 130px;
-  padding: 10px 20px;
   font-size: 16px;
-  position: relative;
-  background-color: white;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-}
-.loader {
-  position: absolute;
-  left: 10px;
-  width: 16px;
-  height: 16px;
-  border: 2px solid green;
-  border-top: 2px solid transparent;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  display: inline-block;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-.resultsContainer {
-  display: flex;
-  gap: 20px;
 }

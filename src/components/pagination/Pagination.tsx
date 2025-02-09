@@ -1,5 +1,6 @@
 import { useSearchParams } from 'react-router-dom';
-import Button from './Button';
+import Button from '../button/Button';
+import styles from './Pagination.module.css';
 
 interface PaginationProps {
   loadingNext: boolean;
@@ -18,7 +19,7 @@ const Pagination = ({
   const [searchParams] = useSearchParams();
   const currentPage = Number(searchParams.get('page'));
   return (
-    <div>
+    <div className={styles.paginationWrap}>
       <Button
         type="button"
         loading={loadingPrev}
@@ -27,7 +28,7 @@ const Pagination = ({
       >
         Back
       </Button>
-      <span> page {currentPage} </span>
+      <span> Page {currentPage} </span>
       <Button
         type="button"
         loading={loadingNext}

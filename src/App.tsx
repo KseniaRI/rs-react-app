@@ -1,13 +1,13 @@
 import { useData } from './hooks/useData';
-import Search from './components/Search';
-import Results from './components/Results';
-import Button from './components/Button';
+import Search from './components/search/Search';
+import Results from './components/results/Results';
 import { ErrorBoundary } from './components/ErrorBoundary';
-import Pagination from './components/Pagination';
+import Pagination from './components/pagination/Pagination';
 import Fallback from './components/Fallback';
 import './App.css';
 import { Route, Routes } from 'react-router-dom';
-import Details from './components/Details';
+import Details from './components/details/Details';
+import Button from './components/button/Button';
 
 function App() {
   const {

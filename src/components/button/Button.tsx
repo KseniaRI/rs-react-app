@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
-import Loader from './Loader';
+import Loader from '../loader/Loader';
+import styles from './Button.module.css';
 
 interface ButtonProps {
   children: ReactNode;
@@ -17,7 +18,7 @@ const Button = ({
 }: ButtonProps) => {
   return (
     <button
-      className="mainButton"
+      className={styles.mainButton}
       type={type}
       onClick={onClick}
       disabled={disabled}

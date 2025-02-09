@@ -1,5 +1,7 @@
 import { Outlet, useNavigate, useSearchParams } from 'react-router-dom';
-import { DataType } from '../types';
+import { DataType } from '../../types';
+import styles from './Results.module.css';
+import Button from '../button/Button';
 
 interface ResultsProps {
   data: DataType[];
@@ -23,21 +25,31 @@ const Results = ({ data }: ResultsProps) => {
   };
 
   const dataList = data.map(({ name, description }) => (
-    <li key={name} onClick={() => onItemClick(name)}>
-      <p>{name}</p>
+    <li
+      className={styles.resultsItem}
+      key={name}
+      onClick={() => onItemClick(name)}
+    >
+      <p className={styles.resultName}>{name}</p>
       <p>{description}</p>
     </li>
   ));
 
   return (
-    <div className="resultsContainer">
-      <div>
-        <div>
-          {hasDetails && <button onClick={closeDetails}>close</button>}
+    <div className={styles.resultsContainer}>
+      <div className={styles.resultsLeftSection}>
+        <div className={styles.resultsHeading}>
           <p>Name</p>
           <p>Description</p>
         </div>
-        <ul>{dataList}</ul>
+        <ul className={styles.resultsList}>{dataList}</ul>
+        {hasDetails && (
+          <div className={styles.closeBtnWrap}>
+            <Button type="button" onClick={closeDetails}>
+              Close details
+            </Button>
+          </div>
+        )}
       </div>
       <Outlet context={{ closeDetails }} />
     </div>
