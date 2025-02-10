@@ -1,45 +1,23 @@
-import { DataType } from '../types';
-
-export const getData = async (): Promise<DataType[]> => {
+const fetchData = async (url: string) => {
   try {
-    const response = await fetch('https://swapi.dev/api/films/?page=2');
+    const response = await fetch(url);
     if (!response.ok) {
-      throw new Error('Something went wrong, impossible get data');
+      throw new Error(`Something went wrong, unable to fetch data from ${url}`);
     }
     const data = await response.json();
-    const result = data.results.map(
-      ({ title, opening_crawl }: { title: string; opening_crawl: string }) => ({
-        name: title,
-        description: opening_crawl,
-      })
-    );
-    return result;
+    return data;
   } catch (error) {
-    console.log('/ ~ getData ~ error:', error);
+    console.log('/ ~ fetchData ~ error:', error);
   }
   return [];
 };
 
-export const getDataByQuery = async (query: string): Promise<DataType[]> => {
-  try {
-    const response = await fetch(
-      `https://swapi.dev/api/films/?search=${query}`
-    );
-    if (!response.ok) {
-      throw new Error(
-        `Something went wrong, impossible get data by search term ${query}`
-      );
-    }
-    const data = await response.json();
-    const result = data.results.map(
-      ({ title, opening_crawl }: { title: string; opening_crawl: string }) => ({
-        name: title,
-        description: opening_crawl,
-      })
-    );
-    return result;
-  } catch (error) {
-    console.log('/ ~ error:', error);
-  }
-  return [];
+export const getData = async (currentPage: number) => {
+  const url = `https://swapi.dev/api/planets/?page=${currentPage}`;
+  return fetchData(url);
+};
+
+export const getDataByQuery = async (query: string) => {
+  const url = `https://swapi.dev/api/planets/?search=${query}`;
+  return fetchData(url);
 };
