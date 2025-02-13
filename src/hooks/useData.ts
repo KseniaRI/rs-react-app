@@ -1,21 +1,24 @@
 import { ChangeEvent, useEffect, useState } from 'react';
-import { DataType } from '../types';
-import { getData } from '../api/getData';
-import { transformData } from '../utils/transformData';
+import { useDispatch } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
+import { usePlanetsListQuery } from '../features/api/apiSlice';
+import { extractDetails } from '../utils/extractDetails';
+import { setPagination, setPlanets } from '../features/api/planetsSlice';
 
 export const useData = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPage = Number(searchParams.get('page')) || 0;
 
-  const [data, setData] = useState<DataType[]>([]);
+  const dispatch = useDispatch();
+
   const initialQuery = !currentPage ? localStorage.getItem('query') : null;
   const [query, setQuery] = useState<string | null>(initialQuery);
 
-  const [nextPage, setNextPage] = useState('');
-  const [prevPage, setPrevPage] = useState('');
+  const { isLoading, data } = usePlanetsListQuery(
+    { page: currentPage },
+    { skip: !!query }
+  );
 
-  const [loadingSearch, setLoadingSearch] = useState(false);
   const [loadingNext, setLoadingNext] = useState(false);
   const [loadingPrev, setLoadingPrev] = useState(false);
 
@@ -32,33 +35,25 @@ export const useData = () => {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await getData(currentPage);
-        setNextPage(response.next);
-        setPrevPage(response.previous);
-        const res = transformData(response.results);
-        setData(res);
-      } catch (error) {
-        console.log(error);
-      }
-    };
     if (currentPage > 0) {
-      fetchData();
       setLoadingNext(false);
       setLoadingPrev(false);
     }
   }, [currentPage]);
 
+  useEffect(() => {
+    if (data) {
+      const planets = extractDetails(data.results);
+      dispatch(setPlanets(planets));
+      dispatch(setPagination({ prev: data.previous, next: data.next }));
+    }
+  }, [data, dispatch]);
+
   return {
     query,
     onQueryChange,
-    data,
-    setData,
-    loadingSearch,
-    setLoadingSearch,
-    nextPage,
-    prevPage,
+    isLoading,
+    // isError,
     loadingNext,
     loadingPrev,
     changeCurrentPage,

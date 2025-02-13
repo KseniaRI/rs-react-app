@@ -1,10 +1,7 @@
-export interface DataType {
-  name: string;
-  description: string;
-}
-export interface ExtractedData {
-  name: string;
-  description: string;
+export interface ApiResponse {
+  next: string | null;
+  previous: string | null;
+  results: Planet[];
 }
 
 export interface Planet {

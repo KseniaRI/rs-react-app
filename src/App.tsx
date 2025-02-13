@@ -7,35 +7,24 @@ import { Route, Routes } from 'react-router-dom';
 import Details from './components/details/Details';
 import Button from './components/button/Button';
 import { useError } from './hooks/useError';
+import { Planet } from './types';
+import { useSelector } from 'react-redux';
+import { RootState } from './app/store';
 
 function App() {
-  const {
-    query,
-    onQueryChange,
-    data,
-    setData,
-    loadingSearch,
-    setLoadingSearch,
-    nextPage,
-    prevPage,
-    loadingNext,
-    loadingPrev,
-    changeCurrentPage,
-  } = useData();
+  const { query, onQueryChange, loadingNext, loadingPrev, changeCurrentPage } =
+    useData();
   const { setError } = useError();
-  const showPagination = data.length > 1 && !query;
+  const planets: Planet[] = useSelector(
+    (state: RootState) => state.planets.planets
+  );
+  const showPagination = planets.length > 1 && !query;
 
   return (
     <>
-      <Search
-        query={query}
-        onQueryChange={onQueryChange}
-        setData={setData}
-        loadingSearch={loadingSearch}
-        setLoadingSearch={setLoadingSearch}
-      />
+      <Search query={query} onQueryChange={onQueryChange} />
       <Routes>
-        <Route path="/" element={<Results data={data} />}>
+        <Route path="/" element={<Results />}>
           <Route path="planet" element={<Details />} />
         </Route>
       </Routes>
@@ -45,8 +34,6 @@ function App() {
           loadingNext={loadingNext}
           loadingPrev={loadingPrev}
           changeCurrentPage={changeCurrentPage}
-          nextPage={nextPage}
-          prevPage={prevPage}
         />
       )}
       <Button type="button" onClick={() => setError(true)}>

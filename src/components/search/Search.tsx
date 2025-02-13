@@ -1,42 +1,38 @@
 import { ChangeEvent, FormEvent } from 'react';
-import { getData, getDataByQuery } from '../../api/getData';
-import { transformData } from '../../utils/transformData';
-import { DataType } from '../../types';
 import { useSearchParams } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { usePlanetDetailsQuery } from '../../features/api/apiSlice';
+import { setPlanets } from '../../features/api/planetsSlice';
+import { extractDetails } from '../../utils/extractDetails';
+import { Planet } from '../../types';
 import Button from '../button/Button';
 import styles from './Search.module.css';
 
 interface SearchProps {
   query: string | null;
   onQueryChange: (e: ChangeEvent<HTMLInputElement>) => void;
-  setData: (res: DataType[]) => void;
-  loadingSearch: boolean;
-  setLoadingSearch: (load: boolean) => void;
 }
 
-const Search = ({
-  query,
-  onQueryChange,
-  setData,
-  loadingSearch,
-  setLoadingSearch,
-}: SearchProps) => {
+const Search = ({ query, onQueryChange }: SearchProps) => {
   const [, setSearchParams] = useSearchParams();
+  const dispatch = useDispatch();
+
+  const { isLoading: isDetailsLoading, data: detailsData } =
+    usePlanetDetailsQuery({ name: query ?? '' }, { skip: !query });
+
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoadingSearch(true);
-    let res: DataType[] = [];
+    let planets: Planet[] = [];
     if (query) {
-      const response = await getDataByQuery(query);
-      res = transformData(response.results);
+      if (detailsData) {
+        planets = extractDetails(detailsData.results);
+      }
       localStorage.setItem('query', query);
     } else {
-      const response = await getData(1);
       setSearchParams({ page: '1' });
-      res = transformData(response.results);
+      localStorage.removeItem('query');
     }
-    setData(res);
-    setLoadingSearch(false);
+    dispatch(setPlanets(planets));
   };
 
   return (
@@ -47,7 +43,7 @@ const Search = ({
         defaultValue={query || undefined}
         onChange={onQueryChange}
       />
-      <Button type="submit" loading={loadingSearch}>
+      <Button type="submit" loading={isDetailsLoading}>
         Search
       </Button>
     </form>
