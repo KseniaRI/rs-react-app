@@ -1,22 +1,28 @@
 import { Outlet, useNavigate, useSearchParams } from 'react-router-dom';
-import { Planet } from '../../types';
-import styles from './Results.module.css';
-import Button from '../button/Button';
-// import Loader from '../loader/Loader';
+import { setSelectedPlanet } from '../../features/api/planetsSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../app/store';
-import { setSelectedPlanet } from '../../features/api/planetsSlice';
+import { Planet } from '../../types';
+import Button from '../button/Button';
+import Loader from '../loader/Loader';
+import styles from './Results.module.css';
 
 const Results = () => {
   const dispatch = useDispatch();
-  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const page = searchParams.get('page') ?? '';
   const hasDetails = searchParams.has('details');
 
   const planets: Planet[] = useSelector(
     (state: RootState) => state.planets.planets
   );
+  const isPlanetsListLoading = useSelector(
+    (state: RootState) => state.planets.isLoading
+  );
+
   const closeDetails = () => {
     navigate(`/?page=${page}`);
   };
@@ -52,9 +58,8 @@ const Results = () => {
           <p>Description</p>
         </div>
         <ul className={styles.resultsList}>
-          {/* {(isLoading || isUninitialized) && <Loader />} */}
+          {isPlanetsListLoading && <Loader />}
           {dataList}
-          {/* {isError && <p>Error</p>} */}
         </ul>
         {hasDetails && (
           <div className={styles.closeBtnWrap}>

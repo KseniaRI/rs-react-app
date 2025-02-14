@@ -3,18 +3,22 @@ import { useDispatch } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import { usePlanetsListQuery } from '../features/api/apiSlice';
 import { extractDetails } from '../utils/extractDetails';
-import { setPagination, setPlanets } from '../features/api/planetsSlice';
+import {
+  setLoading,
+  setPagination,
+  setPlanets,
+} from '../features/api/planetsSlice';
 
 export const useData = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const currentPage = Number(searchParams.get('page')) || 0;
+  const currentPage = Number(searchParams.get('page'));
 
   const dispatch = useDispatch();
 
   const initialQuery = !currentPage ? localStorage.getItem('query') : null;
   const [query, setQuery] = useState<string | null>(initialQuery);
 
-  const { isLoading, data } = usePlanetsListQuery(
+  const { isLoading: isPlanetsListLoading, data } = usePlanetsListQuery(
     { page: currentPage },
     { skip: !!query }
   );
@@ -35,6 +39,10 @@ export const useData = () => {
   };
 
   useEffect(() => {
+    dispatch(setLoading(isPlanetsListLoading));
+  }, [isPlanetsListLoading, dispatch]);
+
+  useEffect(() => {
     if (currentPage > 0) {
       setLoadingNext(false);
       setLoadingPrev(false);
@@ -52,8 +60,6 @@ export const useData = () => {
   return {
     query,
     onQueryChange,
-    isLoading,
-    // isError,
     loadingNext,
     loadingPrev,
     changeCurrentPage,

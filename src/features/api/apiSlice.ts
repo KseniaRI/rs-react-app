@@ -17,7 +17,7 @@ export const apiSlice = createApi({
         };
       },
     }),
-    planetDetails: build.query<ApiResponse, { name: string }>({
+    planet: build.query<ApiResponse, { name: string }>({
       query({ name }) {
         return {
           url: 'planets/',
@@ -31,4 +31,4 @@ export const apiSlice = createApi({
   }),
 });
 
-export const { usePlanetsListQuery, usePlanetDetailsQuery } = apiSlice;
+export const { usePlanetsListQuery, usePlanetQuery } = apiSlice;

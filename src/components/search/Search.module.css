@@ -3,6 +3,7 @@
   justify-content: center;
   gap: 20px;
   margin-bottom: 50px;
+  margin-top: 20px;
 }
 .searchInput {
   border: 1px solid lightgray;

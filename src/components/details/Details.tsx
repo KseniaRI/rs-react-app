@@ -1,9 +1,8 @@
+import { useOutletContext } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../app/store';
 import Button from '../button/Button';
-// import Loader from '../loader/Loader';
 import styles from './Details.module.css';
-import { useOutletContext } from 'react-router-dom';
 
 const Details = () => {
   const planet = useSelector(
@@ -14,6 +13,7 @@ const Details = () => {
   if (!planet) {
     return;
   }
+
   const {
     name,
     climate,
@@ -36,7 +36,6 @@ const Details = () => {
   return (
     <div className={styles.detailsWrap}>
       <h1>{name}</h1>
-      {/* {isLoading && <Loader />} */}
       <div>
         <span className={styles.shortDescription}>Short description:</span>
         <span>{` Planet with ${terrain} and ${climate} climate`}</span>

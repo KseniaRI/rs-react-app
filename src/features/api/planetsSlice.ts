@@ -3,6 +3,7 @@ import { Planet } from '../../types';
 
 interface PlanetsState {
   planets: Planet[];
+  isLoading: boolean;
   selectedPlanet: Planet | null;
   next: string | null;
   prev: string | null;
@@ -10,6 +11,7 @@ interface PlanetsState {
 
 const initialState: PlanetsState = {
   planets: [],
+  isLoading: false,
   selectedPlanet: null,
   next: null,
   prev: null,
@@ -21,6 +23,9 @@ const planetsSlice = createSlice({
   reducers: {
     setPlanets: (state, action: PayloadAction<Planet[]>) => {
       state.planets = action.payload;
+    },
+    setLoading(state, action: PayloadAction<boolean>) {
+      state.isLoading = action.payload;
     },
     setPagination(
       state,
@@ -35,6 +40,6 @@ const planetsSlice = createSlice({
   },
 });
 
-export const { setPlanets, setPagination, setSelectedPlanet } =
+export const { setPlanets, setPagination, setSelectedPlanet, setLoading } =
   planetsSlice.actions;
 export default planetsSlice.reducer;

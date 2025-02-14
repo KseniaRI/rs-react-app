@@ -1,8 +1,8 @@
 import { useSearchParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../app/store';
 import Button from '../button/Button';
 import styles from './Pagination.module.css';
-import { RootState } from '../../app/store';
-import { useSelector } from 'react-redux';
 
 interface PaginationProps {
   loadingNext: boolean;
@@ -16,7 +16,9 @@ const Pagination = ({
 }: PaginationProps) => {
   const [searchParams] = useSearchParams();
   const currentPage = Number(searchParams.get('page'));
+
   const { prev, next } = useSelector((state: RootState) => state.planets);
+
   return (
     <div className={styles.paginationWrap}>
       <Button
