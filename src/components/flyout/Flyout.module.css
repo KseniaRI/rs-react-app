@@ -1,0 +1,15 @@
+.flyoutWrap {
+  position: absolute;
+  bottom: -50px;
+  left: -20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  align-items: center;
+  width: 300px;
+  cursor: pointer;
+  background-color: lightgray;
+  border-radius: 4px;
+  padding: 10px;
+  z-index: 10;
+}

@@ -1,54 +1,20 @@
 import { Outlet, useNavigate, useSearchParams } from 'react-router-dom';
-import { setSelectedPlanet } from '../../features/api/planetsSlice';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../app/store';
-import { Planet } from '../../types';
 import Button from '../button/Button';
-import Loader from '../loader/Loader';
 import styles from './Results.module.css';
+import ResultsList from './ResultsList';
+import Flyout from '../flyout/Flyout';
 
 const Results = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
 
   const page = searchParams.get('page') ?? '';
   const hasDetails = searchParams.has('details');
 
-  const planets: Planet[] = useSelector(
-    (state: RootState) => state.planets.planets
-  );
-  const isPlanetsListLoading = useSelector(
-    (state: RootState) => state.planets.isLoading
-  );
-
   const closeDetails = () => {
     navigate(`/?page=${page}`);
   };
-
-  const onItemClick = (name: string) => {
-    setSearchParams({
-      page,
-      details: name,
-    });
-    navigate(`/planet?page=${page}&details=${name}`);
-    const planet = planets.find(el => el.name === name);
-    if (planet) {
-      dispatch(setSelectedPlanet(planet));
-    }
-  };
-
-  const dataList = planets.map(({ name, terrain, climate }) => (
-    <li
-      className={styles.resultsItem}
-      key={name}
-      onClick={() => onItemClick(name)}
-    >
-      <p className={styles.resultName}>{name}</p>
-      <p>{` Planet with ${terrain} and ${climate} climate`}</p>
-    </li>
-  ));
 
   return (
     <div className={styles.resultsContainer}>
@@ -57,10 +23,7 @@ const Results = () => {
           <p>Name</p>
           <p>Description</p>
         </div>
-        <ul className={styles.resultsList}>
-          {isPlanetsListLoading && <Loader />}
-          {dataList}
-        </ul>
+        <ResultsList />
         {hasDetails && (
           <div className={styles.closeBtnWrap}>
             <Button type="button" onClick={closeDetails}>
@@ -70,6 +33,7 @@ const Results = () => {
         )}
       </div>
       <Outlet context={{ closeDetails }} />
+      <Flyout />
     </div>
   );
 };

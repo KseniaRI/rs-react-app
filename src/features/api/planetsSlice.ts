@@ -5,6 +5,7 @@ interface PlanetsState {
   planets: Planet[];
   isLoading: boolean;
   selectedPlanet: Planet | null;
+  checkedPlanets: Planet[];
   next: string | null;
   prev: string | null;
 }
@@ -13,6 +14,7 @@ const initialState: PlanetsState = {
   planets: [],
   isLoading: false,
   selectedPlanet: null,
+  checkedPlanets: [],
   next: null,
   prev: null,
 };
@@ -37,9 +39,17 @@ const planetsSlice = createSlice({
     setSelectedPlanet: (state, action: PayloadAction<Planet>) => {
       state.selectedPlanet = action.payload;
     },
+    setCheckedPlanets: (state, action: PayloadAction<Planet[]>) => {
+      state.checkedPlanets = action.payload;
+    },
   },
 });
 
-export const { setPlanets, setPagination, setSelectedPlanet, setLoading } =
-  planetsSlice.actions;
+export const {
+  setPlanets,
+  setPagination,
+  setSelectedPlanet,
+  setCheckedPlanets,
+  setLoading,
+} = planetsSlice.actions;
 export default planetsSlice.reducer;
