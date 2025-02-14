@@ -6,7 +6,6 @@ import { store } from './app/store.ts';
 import Fallback from './components/Fallback.tsx';
 import { ErrorBoundary } from './components/ErrorBoundary.tsx';
 import App from './App.tsx';
-import './index.css';
 
 const rootElement = document.getElementById('root');
 

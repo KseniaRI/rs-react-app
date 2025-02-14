@@ -10,6 +10,9 @@ import Details from './components/details/Details';
 import Button from './components/button/Button';
 import { Planet } from './types';
 import './App.css';
+import { ThemeProvider } from './ThemeProvider';
+import Header from './components/header/Header';
+import Container from './components/container/Container';
 
 function App() {
   const { query, onQueryChange, loadingNext, loadingPrev, changeCurrentPage } =
@@ -23,25 +26,27 @@ function App() {
   const showPagination = planets.length > 1 && !query;
 
   return (
-    <>
-      <Search query={query} onQueryChange={onQueryChange} />
-      <Routes>
-        <Route path="/" element={<Results />}>
-          <Route path="planet" element={<Details />} />
-        </Route>
-      </Routes>
-
-      {showPagination && (
-        <Pagination
-          loadingNext={loadingNext}
-          loadingPrev={loadingPrev}
-          changeCurrentPage={changeCurrentPage}
-        />
-      )}
-      <Button type="button" onClick={() => setError(true)}>
-        Generate Error
-      </Button>
-    </>
+    <ThemeProvider>
+      <Container>
+        <Header />
+        <Search query={query} onQueryChange={onQueryChange} />
+        <Routes>
+          <Route path="/" element={<Results />}>
+            <Route path="planet" element={<Details />} />
+          </Route>
+        </Routes>
+        {showPagination && (
+          <Pagination
+            loadingNext={loadingNext}
+            loadingPrev={loadingPrev}
+            changeCurrentPage={changeCurrentPage}
+          />
+        )}
+        <Button type="button" onClick={() => setError(true)}>
+          Generate Error
+        </Button>
+      </Container>
+    </ThemeProvider>
   );
 }
 

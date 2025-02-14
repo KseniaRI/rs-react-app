@@ -31,9 +31,9 @@ const Results = () => {
             </Button>
           </div>
         )}
+        <Flyout />
       </div>
       <Outlet context={{ closeDetails }} />
-      <Flyout />
     </div>
   );
 };

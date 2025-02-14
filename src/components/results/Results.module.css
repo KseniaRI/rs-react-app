@@ -1,12 +1,13 @@
 .resultsContainer {
-  position: relative;
   height: 600px;
   display: flex;
   gap: 50px;
+  justify-content: center;
   margin-bottom: 20px;
 }
 
 .resultsLeftSection {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -18,7 +19,7 @@
 .resultsHeading {
   display: flex;
   justify-content: space-between;
-  font-size: 16px;
+  font-size: 18px;
   text-transform: uppercase;
   font-weight: 700;
 }
@@ -35,7 +36,7 @@
   display: flex;
   justify-content: space-between;
   border-top: 1px solid lightgray;
-  font-size: 16px;
+  font-size: 18px;
   cursor: pointer;
 }
 

@@ -1,0 +1,14 @@
+.container {
+  width: 100%;
+  margin: 0 auto;
+  height: 100vh;
+}
+
+.container.dark {
+  background-color: rgb(42, 41, 41);
+  color: white;
+}
+.container.light {
+  background-color: #fff;
+  color: black;
+}
