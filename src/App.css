@@ -7,7 +7,28 @@
   padding: 0;
   box-sizing: border-box;
 }
-
+html,
+body {
+  text-align: center;
+  font-size: 16px;
+  min-height: 100vh;
+  height: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+  font-family: 'Montserrat', sans-serif;
+}
+body.dark {
+  background-color: rgb(42, 41, 41);
+  color: white;
+}
+body.light {
+  background-color: #fff;
+  color: black;
+}
+#root {
+  min-height: 100vh;
+  padding-bottom: 10px;
+}
 a {
   text-decoration: none;
   color: inherit;
@@ -22,9 +43,4 @@ h1,
 h2,
 h3 {
   margin: 0;
-}
-#root {
-  margin: 0 auto;
-  text-align: center;
-  font-size: 18px;
 }

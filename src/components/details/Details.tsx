@@ -1,13 +1,11 @@
 import { useOutletContext } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../app/store';
+import { useAppSelector } from '../../app/hooks';
+import { getShortDescription } from '../../utils/getShortDescription';
 import Button from '../button/Button';
 import styles from './Details.module.css';
 
 const Details = () => {
-  const planet = useSelector(
-    (state: RootState) => state.planets.selectedPlanet
-  );
+  const planet = useAppSelector(state => state.planets.selectedPlanet);
   const { closeDetails } = useOutletContext<{ closeDetails: () => void }>();
 
   if (!planet) {
@@ -37,8 +35,8 @@ const Details = () => {
     <div className={styles.detailsWrap}>
       <h1>{name}</h1>
       <div>
-        <span className={styles.shortDescription}>Short description:</span>
-        <span>{` Planet with ${terrain} and ${climate} climate`}</span>
+        <span className={styles.shortDescription}>Short description: </span>
+        <span>{getShortDescription(terrain, climate)}</span>
       </div>
       <h3>Details:</h3>
       <ul className={styles.detailsList}>{detailList}</ul>

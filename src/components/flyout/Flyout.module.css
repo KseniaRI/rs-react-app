@@ -1,7 +1,7 @@
 .flyoutWrap {
   position: absolute;
-  bottom: -50px;
-  left: -20px;
+  bottom: -40px;
+  left: -130px;
   display: flex;
   flex-direction: column;
   gap: 15px;

@@ -1,45 +1,16 @@
-import { ChangeEvent, FormEvent } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../app/store';
-import { usePlanetQuery } from '../../features/api/apiSlice';
-import { setPlanets } from '../../features/api/planetsSlice';
-import { extractDetails } from '../../utils/extractDetails';
-import { Planet } from '../../types';
+import { ChangeEvent } from 'react';
+import { useAppSelector } from '../../app/hooks';
 import Button from '../button/Button';
 import styles from './Search.module.css';
 
 interface SearchProps {
-  query: string | null;
+  query: string;
   onQueryChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  onSearchSubmit: () => void;
 }
 
-const Search = ({ query, onQueryChange }: SearchProps) => {
-  const [, setSearchParams] = useSearchParams();
-  const dispatch = useDispatch();
-
-  const { isLoading: isPlanetLoading, data: detailsData } = usePlanetQuery(
-    { name: query ?? '' },
-    { skip: !query }
-  );
-  const isPlanetsListLoading = useSelector(
-    (state: RootState) => state.planets.isLoading
-  );
-
-  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    let planets: Planet[] = [];
-    if (query) {
-      if (detailsData) {
-        planets = extractDetails(detailsData.results);
-      }
-      localStorage.setItem('query', query);
-      setSearchParams({ search: query });
-    } else {
-      setSearchParams({ page: '1' });
-    }
-    dispatch(setPlanets(planets));
-  };
+const Search = ({ query, onQueryChange, onSearchSubmit }: SearchProps) => {
+  const isLoading = useAppSelector(state => state.planets.isLoading);
 
   return (
     <>
@@ -47,7 +18,7 @@ const Search = ({ query, onQueryChange }: SearchProps) => {
         Enter planet name or leave input empty and click Search to load planets
         list:{' '}
       </h3>
-      <form onSubmit={onSubmit} className={styles.searchForm}>
+      <form onSubmit={onSearchSubmit} className={styles.searchForm}>
         <input
           className={styles.searchInput}
           type="text"
@@ -55,7 +26,7 @@ const Search = ({ query, onQueryChange }: SearchProps) => {
           onChange={onQueryChange}
           placeholder="planet name (e.g. Hoth)"
         />
-        <Button type="submit" loading={isPlanetLoading || isPlanetsListLoading}>
+        <Button type="submit" loading={isLoading}>
           Search
         </Button>
       </form>

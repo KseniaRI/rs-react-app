@@ -5,10 +5,12 @@ import styles from './Header.module.css';
 const Header = () => {
   const toggleTheme = useThemeUpdate();
   const darkTheme = useTheme();
+
   return (
     <header className={styles.header}>
+      <h3>SW Planets</h3>
       <Button type="button" onClick={toggleTheme}>
-        {darkTheme ? 'light theme' : 'dark theme'}
+        {darkTheme ? 'Light theme' : 'Dark theme'}
       </Button>
     </header>
   );

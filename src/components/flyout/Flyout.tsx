@@ -1,15 +1,14 @@
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../app/store';
+import { useDispatch } from 'react-redux';
 import { setCheckedPlanets } from '../../features/api/planetsSlice';
+import { useAppSelector } from '../../app/hooks';
 import { downloadCSV } from '../../utils/downloadCSV';
 import Button from '../button/Button';
 import styles from './Flyout.module.css';
 
 const Flyout = () => {
   const dispatch = useDispatch();
-  const checkedPlanets = useSelector(
-    (state: RootState) => state.planets.checkedPlanets
-  );
+  const checkedPlanets = useAppSelector(state => state.planets.checkedPlanets);
+
   if (checkedPlanets.length === 0) {
     return null;
   }

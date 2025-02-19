@@ -5,9 +5,9 @@ import styles from './Button.module.css';
 interface ButtonProps {
   children: ReactNode;
   type: 'submit' | 'button';
-  loading?: boolean;
   onClick?: () => void;
   disabled?: boolean;
+  loading?: boolean;
 }
 const Button = ({
   children,

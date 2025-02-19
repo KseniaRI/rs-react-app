@@ -1,5 +1,9 @@
 .header {
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
+  align-items: center;
   padding: 5px;
+  border-bottom: 2px solid lightgray;
+  margin-bottom: 10px;
+  text-transform: uppercase;
 }

@@ -1,13 +1,13 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
-import { usePlanetsListQuery } from '../features/api/apiSlice';
-import { extractDetails } from '../utils/extractDetails';
+import { usePlanetQuery, usePlanetsListQuery } from '../features/api/apiSlice';
 import {
   setLoading,
   setPagination,
   setPlanets,
 } from '../features/api/planetsSlice';
+import { extractDetails } from '../utils/extractDetails';
 
 export const useData = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -15,16 +15,30 @@ export const useData = () => {
 
   const dispatch = useDispatch();
 
-  const initialQuery = !currentPage ? localStorage.getItem('query') : null;
-  const [query, setQuery] = useState<string | null>(initialQuery);
-
-  const { isLoading: isPlanetsListLoading, data } = usePlanetsListQuery(
-    { page: currentPage },
-    { skip: !!query }
-  );
+  const initialQuery = localStorage.getItem('query') || '';
+  const [query, setQuery] = useState<string>(initialQuery);
+  const [searchQuery, setSearchQuery] = useState<string>(initialQuery);
+  const isSearchingByQuery = Boolean(searchQuery);
 
   const [loadingNext, setLoadingNext] = useState(false);
   const [loadingPrev, setLoadingPrev] = useState(false);
+
+  const { isLoading: isPlanetsListLoading, data: planetsData } =
+    usePlanetsListQuery(
+      { page: currentPage || 1 },
+      { skip: isSearchingByQuery }
+    );
+
+  const { isLoading: isPlanetLoading, data: planetData } = usePlanetQuery(
+    { name: searchQuery },
+    { skip: !isSearchingByQuery }
+  );
+
+  const onSearchSubmit = () => {
+    setSearchQuery(query);
+    localStorage.setItem('query', query);
+    setSearchParams({ search: query, page: '1' });
+  };
 
   const changeCurrentPage = (page: number) => {
     setSearchParams({ page: page.toString() });
@@ -34,13 +48,30 @@ export const useData = () => {
       setLoadingPrev(true);
     }
   };
+
   const onQueryChange = (e: ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value.trim());
   };
 
   useEffect(() => {
-    dispatch(setLoading(isPlanetsListLoading));
-  }, [isPlanetsListLoading, dispatch]);
+    if (!searchParams.has('page') || currentPage === 0) {
+      if (!isSearchingByQuery) {
+        setSearchParams({ page: '1' }, { replace: true });
+      } else {
+        setSearchParams({ search: searchQuery }, { replace: true });
+      }
+    }
+  }, [
+    searchParams,
+    currentPage,
+    isSearchingByQuery,
+    searchQuery,
+    setSearchParams,
+  ]);
+
+  useEffect(() => {
+    dispatch(setLoading(isPlanetsListLoading || isPlanetLoading));
+  }, [isPlanetsListLoading, isPlanetLoading, dispatch]);
 
   useEffect(() => {
     if (currentPage > 0) {
@@ -50,16 +81,24 @@ export const useData = () => {
   }, [currentPage]);
 
   useEffect(() => {
-    if (data) {
-      const planets = extractDetails(data.results);
-      dispatch(setPlanets(planets));
-      dispatch(setPagination({ prev: data.previous, next: data.next }));
+    if (planetsData && !isSearchingByQuery) {
+      dispatch(setPlanets(extractDetails(planetsData.results)));
+      dispatch(
+        setPagination({ prev: planetsData.previous, next: planetsData.next })
+      );
     }
-  }, [data, dispatch]);
+  }, [planetsData, dispatch, isSearchingByQuery]);
+
+  useEffect(() => {
+    if (planetData && isSearchingByQuery) {
+      dispatch(setPlanets(extractDetails(planetData.results)));
+    }
+  }, [planetData, dispatch, isSearchingByQuery]);
 
   return {
     query,
     onQueryChange,
+    onSearchSubmit,
     loadingNext,
     loadingPrev,
     changeCurrentPage,

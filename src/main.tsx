@@ -3,8 +3,9 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { store } from './app/store.ts';
-import Fallback from './components/Fallback.tsx';
-import { ErrorBoundary } from './components/ErrorBoundary.tsx';
+import Fallback from './components/errorBoundary/Fallback.tsx';
+import { ErrorBoundary } from './components/errorBoundary/ErrorBoundary.tsx';
+import { ThemeProvider } from './themeProvider.tsx';
 import App from './App.tsx';
 
 const rootElement = document.getElementById('root');
@@ -15,7 +16,9 @@ if (rootElement) {
       <Provider store={store}>
         <BrowserRouter>
           <ErrorBoundary fallback={<Fallback />}>
-            <App />
+            <ThemeProvider>
+              <App />
+            </ThemeProvider>
           </ErrorBoundary>
         </BrowserRouter>
       </Provider>
