@@ -3,7 +3,6 @@ import { useEffect } from 'react';
 import { useAppSelector } from './app/hooks';
 import { useData } from './hooks/useData';
 import { useError } from './hooks/useError';
-import { useTheme } from './themeContext';
 import Search from './components/search/Search';
 import Results from './components/results/Results';
 import Pagination from './components/pagination/Pagination';
@@ -12,6 +11,7 @@ import Button from './components/button/Button';
 import Header from './components/header/Header';
 import { Planet } from './types';
 import './App.css';
+import { useTheme } from './themeContext';
 
 function App() {
   const {
