@@ -1,5 +1,5 @@
 import { ReactNode, useState } from 'react';
-import { ThemeContext, ThemeUpdateContext } from './themeContext';
+import { ThemeContext, ThemeUpdateContext } from './ThemeContext';
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [darkTheme, setDarkTheme] = useState<boolean>(

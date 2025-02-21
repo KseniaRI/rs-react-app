@@ -1,4 +1,4 @@
-import { useTheme, useThemeUpdate } from '../../themeContext';
+import { useTheme, useThemeUpdate } from '../../ThemeContext';
 import Button from '../button/Button';
 import styles from './Header.module.css';
 

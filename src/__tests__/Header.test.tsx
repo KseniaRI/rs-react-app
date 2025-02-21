@@ -2,7 +2,7 @@ import '@testing-library/jest-dom';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, test, vi, expect, beforeEach } from 'vitest';
 import Header from '../components/header/Header';
-import { ThemeProvider } from '../themeProvider';
+import { ThemeProvider } from '../ThemeProvider';
 
 vi.stubGlobal('localStorage', {
   getItem: vi.fn(),

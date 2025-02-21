@@ -11,7 +11,7 @@ import Button from './components/button/Button';
 import Header from './components/header/Header';
 import { Planet } from './types';
 import './App.css';
-import { useTheme } from './themeContext';
+import { useTheme } from './ThemeContext';
 
 function App() {
   const {
