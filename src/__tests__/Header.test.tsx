@@ -12,12 +12,11 @@ vi.stubGlobal('localStorage', {
 
 describe('Header Component', () => {
   beforeEach(() => {
-    (localStorage.getItem as vi.Mock).mockClear();
-    (localStorage.setItem as vi.Mock).mockClear();
+    vi.clearAllMocks();
   });
 
   test('renders with default theme from localStorage', () => {
-    (localStorage.getItem as vi.Mock).mockReturnValueOnce('false');
+    vi.mocked(localStorage.getItem).mockReturnValueOnce('false');
 
     render(
       <ThemeProvider>
@@ -29,7 +28,7 @@ describe('Header Component', () => {
   });
 
   test('toggles theme and updates localStorage', () => {
-    (localStorage.getItem as vi.Mock).mockReturnValueOnce('false');
+    vi.mocked(localStorage.getItem).mockReturnValueOnce('false');
 
     render(
       <ThemeProvider>
@@ -43,7 +42,7 @@ describe('Header Component', () => {
   });
 
   test('loads the correct theme from localStorage', () => {
-    (localStorage.getItem as vi.Mock).mockReturnValueOnce('true');
+    vi.mocked(localStorage.getItem).mockReturnValueOnce('true');
 
     render(
       <ThemeProvider>
