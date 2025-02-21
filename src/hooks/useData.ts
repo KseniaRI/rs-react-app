@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import { usePlanetQuery, usePlanetsListQuery } from '../features/api/apiSlice';
@@ -34,7 +34,8 @@ export const useData = () => {
     { skip: !isSearchingByQuery }
   );
 
-  const onSearchSubmit = () => {
+  const onSearchSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     setSearchQuery(query);
     localStorage.setItem('query', query);
     setSearchParams({ search: query, page: '1' });

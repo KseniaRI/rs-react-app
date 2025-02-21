@@ -1,4 +1,4 @@
-import { ChangeEvent } from 'react';
+import { ChangeEvent, FormEvent } from 'react';
 import { useAppSelector } from '../../app/hooks';
 import Button from '../button/Button';
 import styles from './Search.module.css';
@@ -6,7 +6,7 @@ import styles from './Search.module.css';
 interface SearchProps {
   query: string;
   onQueryChange: (e: ChangeEvent<HTMLInputElement>) => void;
-  onSearchSubmit: () => void;
+  onSearchSubmit: (e: FormEvent<HTMLFormElement>) => void;
 }
 
 const Search = ({ query, onQueryChange, onSearchSubmit }: SearchProps) => {
@@ -18,7 +18,7 @@ const Search = ({ query, onQueryChange, onSearchSubmit }: SearchProps) => {
         Enter planet name or leave input empty and click Search to load planets
         list:{' '}
       </h3>
-      <form onSubmit={onSearchSubmit} className={styles.searchForm}>
+      <form onSubmit={e => onSearchSubmit(e)} className={styles.searchForm}>
         <input
           className={styles.searchInput}
           type="text"
