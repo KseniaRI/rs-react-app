@@ -9,9 +9,10 @@ import Pagination from './components/pagination/Pagination';
 import Details from './components/details/Details';
 import Button from './components/button/Button';
 import Header from './components/header/Header';
+import NotFound from './components/notFound/NotFound';
 import { Planet } from './types';
-import './App.css';
 import { useTheme } from './ThemeContext';
+import './App.css';
 
 function App() {
   const {
@@ -47,6 +48,7 @@ function App() {
         <Route path="/" element={<Results />}>
           <Route path="planet" element={<Details />} />
         </Route>
+        <Route path="*" element={<NotFound />} />
       </Routes>
       {showPagination && (
         <Pagination
