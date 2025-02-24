@@ -1,35 +1,65 @@
-import { ChangeEvent, useState } from 'react';
-import Search from './components/Search';
-import Results from './components/Results';
-import Button from './components/Button';
-import { DataType } from './types';
+import { Route, Routes } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useAppSelector } from './app/hooks';
+import { useData } from './hooks/useData';
+import { useError } from './hooks/useError';
+import Search from './components/search/Search';
+import Results from './components/results/Results';
+import Pagination from './components/pagination/Pagination';
+import Details from './components/details/Details';
+import Button from './components/button/Button';
+import Header from './components/header/Header';
+import NotFound from './components/notFound/NotFound';
+import { Planet } from './types';
+import { useTheme } from './ThemeContext';
 import './App.css';
-import { ErrorBoundary } from './components/ErrorBoundary';
 
 function App() {
-  const [query, setQuery] = useState<string | null>(
-    localStorage.getItem('query')
-  );
-  const [data, setData] = useState<DataType[]>([]);
+  const {
+    query,
+    onQueryChange,
+    onSearchSubmit,
+    loadingNext,
+    loadingPrev,
+    changeCurrentPage,
+  } = useData();
+  const { setError } = useError();
 
-  const handleErrorButtonClick = () => {
-    throw new Error('Generated error');
-  };
+  const planets: Planet[] = useAppSelector(state => state.planets.planets);
+
+  const darkTheme = useTheme();
+
+  useEffect(() => {
+    document.body.classList.toggle('dark', darkTheme);
+    document.body.classList.toggle('light', !darkTheme);
+  }, [darkTheme]);
+
+  const showPagination = planets.length > 1;
+
   return (
     <>
-      <ErrorBoundary fallback={<p>Something went wrong</p>}>
-        <Search
-          query={query}
-          onQueryChange={(e: ChangeEvent<HTMLInputElement>) =>
-            setQuery(e.target.value.trim())
-          }
-          setData={setData}
+      <Header />
+      <Search
+        query={query}
+        onQueryChange={onQueryChange}
+        onSearchSubmit={onSearchSubmit}
+      />
+      <Routes>
+        <Route path="/" element={<Results />}>
+          <Route path="planet" element={<Details />} />
+        </Route>
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+      {showPagination && (
+        <Pagination
+          loadingNext={loadingNext}
+          loadingPrev={loadingPrev}
+          changeCurrentPage={changeCurrentPage}
         />
-        <Results data={data} />
-        <Button type="submit" onClick={handleErrorButtonClick}>
-          Error
-        </Button>
-      </ErrorBoundary>
+      )}
+      <Button type="button" onClick={() => setError(true)}>
+        Generate Error
+      </Button>
     </>
   );
 }

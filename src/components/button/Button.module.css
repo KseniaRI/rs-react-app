@@ -1,0 +1,26 @@
+.mainButton {
+  width: 150px;
+  padding: 10px 20px;
+  font-size: 16px;
+  position: relative;
+  background-color: white;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 1px solid lightgray;
+  border-radius: 4px;
+  transition:
+    color 250ms cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 250ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.mainButton:not(:disabled) {
+  cursor: pointer;
+}
+.mainButton:not(:disabled):hover,
+.mainButton:not(:disabled):focus {
+  background-color: lightgray;
+  color: white;
+  border: 1px solid white;
+}

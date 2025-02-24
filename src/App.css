@@ -1,37 +1,46 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+@import 'normalize.css';
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html,
+body {
   text-align: center;
-}
-.mainButton {
-  width: 130px;
-  padding: 10px 20px;
   font-size: 16px;
-  position: relative;
-  background-color: white;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
+  min-height: 100vh;
+  height: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+  font-family: 'Montserrat', sans-serif;
 }
-.loader {
-  position: absolute;
-  left: 10px;
-  width: 16px;
-  height: 16px;
-  border: 2px solid green;
-  border-top: 2px solid transparent;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  display: inline-block;
+body.dark {
+  background-color: rgb(42, 41, 41);
+  color: white;
+}
+body.light {
+  background-color: #fff;
+  color: black;
+}
+#root {
+  min-height: 100vh;
+  padding-bottom: 10px;
+}
+a {
+  text-decoration: none;
+  color: inherit;
 }
 
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+ul,
+ol {
+  list-style: none;
+}
+p,
+h1,
+h2,
+h3 {
+  margin: 0;
 }
