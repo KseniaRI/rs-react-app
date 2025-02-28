@@ -1,12 +1,12 @@
 import '@testing-library/jest-dom';
-import { describe, expect, test } from 'vitest';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import planetsReducer from '../features/api/planetsSlice';
 import { Planet } from '../types';
 import ResultsList from '../components/results/ResultsList';
+import { NextRouter, useRouter } from 'next/router';
 
 const mockPlanets: Planet[] = [
   {
@@ -53,15 +53,25 @@ const store = configureStore({
     },
   },
 });
+vi.mock('next/router', () => ({
+  useRouter: vi.fn(),
+}));
 
 describe('ResultsList Component', () => {
+  beforeEach(() => {
+    vi.resetAllMocks();
+    const pushMock = vi.fn();
+    vi.mocked(useRouter).mockReturnValue({
+      push: pushMock,
+      pathname: '/',
+      query: {},
+    } as unknown as NextRouter);
+  });
   describe('planets are present', () => {
     test('renders the correct number of list items', () => {
       render(
         <Provider store={store}>
-          <MemoryRouter>
-            <ResultsList />
-          </MemoryRouter>
+          <ResultsList />
         </Provider>
       );
 
@@ -90,9 +100,7 @@ describe('ResultsList Component', () => {
 
       render(
         <Provider store={emptyStore}>
-          <MemoryRouter>
-            <ResultsList />
-          </MemoryRouter>
+          <ResultsList />
         </Provider>
       );
       expect(screen.getByText('No planets are present')).toBeInTheDocument();
@@ -119,21 +127,16 @@ describe('ResultsList Component', () => {
 
       render(
         <Provider store={loadingStore}>
-          <MemoryRouter>
-            <ResultsList />
-          </MemoryRouter>
+          <ResultsList />
         </Provider>
       );
-
       expect(screen.getByTestId('loader')).toBeInTheDocument();
     });
 
     test('does not show the loader when isLoading is false', () => {
       render(
         <Provider store={store}>
-          <MemoryRouter>
-            <ResultsList />
-          </MemoryRouter>
+          <ResultsList />
         </Provider>
       );
 

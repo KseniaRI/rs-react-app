@@ -76,7 +76,6 @@ describe('Search Component', () => {
         />
       </Provider>
     );
-
     const input = screen.getByPlaceholderText(/planet name/i);
     expect(input).toHaveValue('Hoth');
   });

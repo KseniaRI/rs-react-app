@@ -49,6 +49,7 @@ describe('Header Component', () => {
         <Header />
       </ThemeProvider>
     );
+
     expect(screen.getByText('Light theme')).toBeInTheDocument();
   });
 });

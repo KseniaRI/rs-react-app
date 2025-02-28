@@ -53,7 +53,6 @@ const createMockStore = (checkedPlanets: Planet[]) =>
 describe('Flyout Component', () => {
   test('does not render when no planets are selected', () => {
     const store = createMockStore([]);
-
     render(
       <Provider store={store}>
         <Flyout />

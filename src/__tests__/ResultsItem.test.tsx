@@ -1,7 +1,6 @@
 import '@testing-library/jest-dom';
 import { describe, test, vi, expect } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { MemoryRouter, useNavigate } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import planetsReducer, {
@@ -10,14 +9,11 @@ import planetsReducer, {
 } from '../features/api/planetsSlice';
 import { Planet } from '../types';
 import ResultsItem from '../components/results/ResultsItem';
+import { NextRouter, useRouter } from 'next/router';
 
-vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom');
-  return {
-    ...actual,
-    useNavigate: vi.fn(),
-  };
-});
+vi.mock('next/router', () => ({
+  useRouter: vi.fn(),
+}));
 
 const mockDispatch = vi.fn();
 
@@ -60,9 +56,7 @@ describe('ResultsItem Component', () => {
   test('renders the correct item data', () => {
     render(
       <Provider store={mockStore}>
-        <MemoryRouter>
-          <ResultsItem planet={mockPlanet} />
-        </MemoryRouter>
+        <ResultsItem planet={mockPlanet} />
       </Provider>
     );
 
@@ -70,33 +64,31 @@ describe('ResultsItem Component', () => {
   });
 
   test('clicking an item navigates to details', () => {
-    const navigate = vi.fn();
-    (useNavigate as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
-      navigate
-    );
+    const pushMock = vi.fn();
+    vi.mocked(useRouter).mockReturnValue({
+      push: pushMock,
+      pathname: '/',
+      query: {},
+    } as unknown as NextRouter);
 
     render(
       <Provider store={mockStore}>
-        <MemoryRouter>
-          <ResultsItem planet={mockPlanet} />
-        </MemoryRouter>
+        <ResultsItem planet={mockPlanet} />
       </Provider>
     );
 
     fireEvent.click(screen.getByText(mockPlanet.name));
-    expect(navigate).toHaveBeenCalledWith(
-      expect.stringContaining(
-        `/planet?page=1&search=&details=${mockPlanet.name}`
-      )
-    );
+    expect(pushMock).toHaveBeenCalledWith({
+      pathname: '/',
+      query: { details: mockPlanet.name },
+    });
+    expect(mockDispatch).toHaveBeenCalledWith(setSelectedPlanet(mockPlanet));
   });
 
   test('clicking an item dispatches setSelectedPlanet', () => {
     render(
       <Provider store={mockStore}>
-        <MemoryRouter>
-          <ResultsItem planet={mockPlanet} />
-        </MemoryRouter>
+        <ResultsItem planet={mockPlanet} />
       </Provider>
     );
 
@@ -107,9 +99,7 @@ describe('ResultsItem Component', () => {
   test('checkbox is not checked when planet is not selected', () => {
     render(
       <Provider store={mockStore}>
-        <MemoryRouter>
-          <ResultsItem planet={mockPlanet} />
-        </MemoryRouter>
+        <ResultsItem planet={mockPlanet} />
       </Provider>
     );
 
@@ -136,9 +126,7 @@ describe('ResultsItem Component', () => {
 
     render(
       <Provider store={newStore}>
-        <MemoryRouter>
-          <ResultsItem planet={mockPlanet} />
-        </MemoryRouter>
+        <ResultsItem planet={mockPlanet} />
       </Provider>
     );
 
@@ -166,9 +154,7 @@ describe('ResultsItem Component', () => {
 
     render(
       <Provider store={newStore}>
-        <MemoryRouter>
-          <ResultsItem planet={mockPlanet} />
-        </MemoryRouter>
+        <ResultsItem planet={mockPlanet} />
       </Provider>
     );
 
@@ -197,16 +183,13 @@ describe('ResultsItem Component', () => {
 
     render(
       <Provider store={newStore}>
-        <MemoryRouter>
-          <ResultsItem planet={mockPlanet} />
-        </MemoryRouter>
+        <ResultsItem planet={mockPlanet} />
       </Provider>
     );
 
     const checkbox = screen.getByRole('checkbox');
     fireEvent.click(checkbox);
     fireEvent.click(checkbox);
-
     expect(mockDispatch).toHaveBeenCalledWith(setCheckedPlanets([]));
   });
 });

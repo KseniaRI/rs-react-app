@@ -1,19 +1,16 @@
 import '@testing-library/jest-dom';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { MemoryRouter, useSearchParams } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import planetsReducer from '../features/api/planetsSlice';
 import { describe, test, vi, expect } from 'vitest';
 import Pagination from '../components/pagination/Pagination';
+import { NextRouter, useRouter } from 'next/router';
 
-vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom');
-  return {
-    ...actual,
-    useSearchParams: vi.fn(),
-  };
-});
+vi.mock('next/router', () => ({
+  useRouter: vi.fn(),
+}));
 
 const mockStore = (prev: string | null, next: string | null) =>
   configureStore({
@@ -35,10 +32,9 @@ const mockStore = (prev: string | null, next: string | null) =>
 describe('Pagination Component', () => {
   test('updates page parameter on next button click', () => {
     const changeCurrentPage = vi.fn();
-    vi.mocked(useSearchParams).mockReturnValue([
-      new URLSearchParams({ page: '1' }),
-      vi.fn(),
-    ]);
+    vi.mocked(useRouter).mockReturnValue({
+      query: { page: '1' },
+    } as unknown as NextRouter);
     const store = mockStore('prevPage', 'nextPage');
 
     render(
@@ -59,10 +55,9 @@ describe('Pagination Component', () => {
 
   test('updates page parameter on back button click', () => {
     const changeCurrentPage = vi.fn();
-    vi.mocked(useSearchParams).mockReturnValue([
-      new URLSearchParams({ page: '2' }),
-      vi.fn(),
-    ]);
+    vi.mocked(useRouter).mockReturnValue({
+      query: { page: '2' },
+    } as unknown as NextRouter);
     const store = mockStore('prevPage', 'nextPage');
 
     render(
@@ -83,10 +78,9 @@ describe('Pagination Component', () => {
 
   test('disables back button on first page', () => {
     const changeCurrentPage = vi.fn();
-    vi.mocked(useSearchParams).mockReturnValue([
-      new URLSearchParams({ page: '1' }),
-      vi.fn(),
-    ]);
+    vi.mocked(useRouter).mockReturnValue({
+      query: { page: '1' },
+    } as unknown as NextRouter);
     const store = mockStore(null, 'nextPage');
 
     render(
@@ -106,10 +100,9 @@ describe('Pagination Component', () => {
 
   test('disables next button if no next page', () => {
     const changeCurrentPage = vi.fn();
-    vi.mocked(useSearchParams).mockReturnValue([
-      new URLSearchParams({ page: '2' }),
-      vi.fn(),
-    ]);
+    vi.mocked(useRouter).mockReturnValue({
+      query: { page: '2' },
+    } as unknown as NextRouter);
 
     const store = mockStore('prevPage', null);
 

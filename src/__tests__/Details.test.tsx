@@ -1,20 +1,12 @@
 import '@testing-library/jest-dom';
-import { describe, test, vi, expect, beforeEach } from 'vitest';
+import { describe, test, vi, expect } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
-import { MemoryRouter, useOutletContext } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 import planetsReducer from '../features/api/planetsSlice';
 import { Planet } from '../types';
 import Details from '../components/details/Details';
-
-vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom');
-  return {
-    ...actual,
-    useOutletContext: vi.fn(),
-  };
-});
 
 const mockPlanet: Planet = {
   name: 'Tatooine',
@@ -44,19 +36,14 @@ const createMockStore = (selectedPlanet: Planet | null) =>
   });
 
 describe('Details Component', () => {
-  beforeEach(() => {
-    vi.mocked(useOutletContext).mockReturnValue({
-      closeDetails: vi.fn(),
-    });
-  });
-
   test('displays correct planet details', () => {
     const store = createMockStore(mockPlanet);
+    const closeDetails = vi.fn();
 
     render(
       <Provider store={store}>
         <MemoryRouter>
-          <Details />
+          <Details closeDetails={closeDetails} />
         </MemoryRouter>
       </Provider>
     );
@@ -77,14 +64,10 @@ describe('Details Component', () => {
     const store = createMockStore(mockPlanet);
     const closeDetails = vi.fn();
 
-    vi.mocked(useOutletContext).mockReturnValue({
-      closeDetails,
-    });
-
     render(
       <Provider store={store}>
         <MemoryRouter>
-          <Details />
+          <Details closeDetails={closeDetails} />
         </MemoryRouter>
       </Provider>
     );
@@ -92,12 +75,16 @@ describe('Details Component', () => {
     fireEvent.click(screen.getByText(/Close details/i));
     expect(closeDetails).toHaveBeenCalled();
   });
+
   test('does not render any content when no planet is selected', () => {
     const store = createMockStore(null);
+
+    const closeDetails = vi.fn();
+
     render(
       <Provider store={store}>
         <MemoryRouter>
-          <Details />
+          <Details closeDetails={closeDetails} />
         </MemoryRouter>
       </Provider>
     );

@@ -10,10 +10,14 @@ const Results = () => {
   const { details, ...restQuery } = router.query;
 
   const closeDetails = () => {
-    router.push({
-      pathname: router.pathname,
-      query: restQuery,
-    });
+    router.push(
+      {
+        pathname: router.pathname,
+        query: restQuery,
+      },
+      undefined,
+      { shallow: true }
+    );
   };
 
   return (

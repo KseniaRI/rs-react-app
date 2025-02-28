@@ -1,17 +1,62 @@
 import '@testing-library/jest-dom';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { MemoryRouter, useSearchParams, useNavigate } from 'react-router-dom';
-import { describe, test, vi, expect, beforeEach } from 'vitest';
+import { describe, test, vi, expect } from 'vitest';
+import { NextRouter, useRouter } from 'next/router';
+import { configureStore } from '@reduxjs/toolkit';
+import planetsReducer from '../features/api/planetsSlice';
+import { Planet } from '../types';
 import Results from '../components/results/Results';
+import { Provider } from 'react-redux';
 
-vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom');
-  return {
-    ...actual,
-    useNavigate: vi.fn(),
-    useSearchParams: vi.fn(),
-  };
+const mockPlanets: Planet[] = [
+  {
+    name: 'Tatooine',
+    terrain: 'desert',
+    climate: 'arid',
+    diameter: '10',
+    orbital_period: '20',
+    gravity: '5',
+    population: '100000',
+  },
+  {
+    name: 'Hoth',
+    terrain: 'ice plains',
+    climate: 'frozen',
+    diameter: '10',
+    orbital_period: '20',
+    gravity: '5',
+    population: '100000',
+  },
+  {
+    name: 'Endor',
+    terrain: 'forests',
+    climate: 'temperate',
+    diameter: '10',
+    orbital_period: '20',
+    gravity: '5',
+    population: '100000',
+  },
+];
+
+const store = configureStore({
+  reducer: {
+    planets: planetsReducer,
+  },
+  preloadedState: {
+    planets: {
+      planets: mockPlanets,
+      isLoading: false,
+      checkedPlanets: [],
+      selectedPlanet: null,
+      next: null,
+      prev: null,
+    },
+  },
 });
+
+vi.mock('next/router', () => ({
+  useRouter: vi.fn(),
+}));
 
 vi.mock('../components/results/ResultsList', () => ({
   default: () => <div>Mocked ResultsList</div>,
@@ -22,20 +67,16 @@ vi.mock('../components/flyout/Flyout', () => ({
 }));
 
 describe('Results Component', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   test('renders ResultsList and Flyout', () => {
-    vi.mocked(useSearchParams).mockReturnValue([
-      new URLSearchParams(),
-      vi.fn(),
-    ]);
+    vi.mocked(useRouter).mockReturnValue({
+      query: {},
+      pathname: '/',
+    } as unknown as NextRouter);
 
     render(
-      <MemoryRouter>
+      <Provider store={store}>
         <Results />
-      </MemoryRouter>
+      </Provider>
     );
 
     expect(screen.getByText('Mocked ResultsList')).toBeInTheDocument();
@@ -43,36 +84,40 @@ describe('Results Component', () => {
   });
 
   test('renders Close details button when details param is present', () => {
-    vi.mocked(useSearchParams).mockReturnValue([
-      new URLSearchParams('?details=Hoth'),
-      vi.fn(),
-    ]);
+    vi.mocked(useRouter).mockReturnValue({
+      query: { details: 'Hoth' },
+      pathname: '/',
+    } as unknown as NextRouter);
 
     render(
-      <MemoryRouter>
+      <Provider store={store}>
         <Results />
-      </MemoryRouter>
+      </Provider>
     );
 
     expect(screen.getByText('Close details')).toBeInTheDocument();
   });
 
   test('navigates to correct URL when Close details button is clicked', () => {
-    const navigate = vi.fn();
-    vi.mocked(useNavigate).mockReturnValue(navigate);
+    const pushMock = vi.fn();
 
-    vi.mocked(useSearchParams).mockReturnValue([
-      new URLSearchParams('?page=1&search=hoth&details=Hoth'),
-      vi.fn(),
-    ]);
+    vi.mocked(useRouter).mockReturnValue({
+      query: { page: '1', search: 'hoth', details: 'Hoth' },
+      pathname: '/',
+      push: pushMock,
+    } as unknown as NextRouter);
 
     render(
-      <MemoryRouter>
+      <Provider store={store}>
         <Results />
-      </MemoryRouter>
+      </Provider>
     );
 
     fireEvent.click(screen.getByText('Close details'));
-    expect(navigate).toHaveBeenCalledWith('/?page=1');
+    expect(pushMock).toHaveBeenCalledWith(
+      { pathname: '/', query: { page: '1', search: 'hoth' } },
+      undefined,
+      { shallow: true }
+    );
   });
 });
