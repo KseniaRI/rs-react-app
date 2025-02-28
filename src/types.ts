@@ -2,6 +2,7 @@ export interface ApiResponse {
   next: string | null;
   previous: string | null;
   results: Planet[];
+  count: number;
 }
 
 export interface Planet {

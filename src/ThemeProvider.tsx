@@ -1,10 +1,19 @@
-import { ReactNode, useState } from 'react';
+'use client';
+
+import { ReactNode, useEffect, useState } from 'react';
 import { ThemeContext, ThemeUpdateContext } from './ThemeContext';
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [darkTheme, setDarkTheme] = useState<boolean>(
-    JSON.parse(localStorage.getItem('darkTheme') || 'false')
-  );
+  const [darkTheme, setDarkTheme] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedTheme = localStorage.getItem('darkTheme');
+      if (storedTheme) {
+        setDarkTheme(JSON.parse(storedTheme));
+      }
+    }
+  }, []);
 
   const toggleTheme = () => {
     setDarkTheme(prev => {

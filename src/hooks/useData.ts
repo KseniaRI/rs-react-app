@@ -1,6 +1,6 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { useSearchParams } from 'react-router-dom';
+import { useRouter } from 'next/router';
 import { usePlanetQuery, usePlanetsListQuery } from '../features/api/apiSlice';
 import {
   setLoading,
@@ -10,14 +10,14 @@ import {
 import { extractDetails } from '../utils/extractDetails';
 
 export const useData = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const currentPage = Number(searchParams.get('page'));
-
   const dispatch = useDispatch();
+  const router = useRouter();
+  const { page } = router.query;
 
-  const initialQuery = localStorage.getItem('query') || '';
-  const [query, setQuery] = useState<string>(initialQuery);
-  const [searchQuery, setSearchQuery] = useState<string>(initialQuery);
+  const currentPage = Number(page);
+
+  const [query, setQuery] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState<string>('');
   const isSearchingByQuery = Boolean(searchQuery);
 
   const [loadingNext, setLoadingNext] = useState(false);
@@ -38,15 +38,35 @@ export const useData = () => {
     e.preventDefault();
     setSearchQuery(query);
     localStorage.setItem('query', query);
-    setSearchParams({ search: query, page: '1' });
+    if (query) {
+      router.push({
+        pathname: router.pathname,
+        query: { search: query },
+      });
+    } else {
+      router.push({
+        pathname: router.pathname,
+        query: { page: '1' },
+      });
+    }
   };
 
   const changeCurrentPage = (page: number) => {
-    setSearchParams({ page: page.toString() });
-    if (page > currentPage) {
-      setLoadingNext(true);
-    } else {
-      setLoadingPrev(true);
+    if (planetsData) {
+      const maxPages = Math.floor(
+        planetsData.count / planetsData?.results.length
+      );
+      if (page <= maxPages) {
+        router.push({
+          pathname: router.pathname,
+          query: { ...router.query, page: page.toString() },
+        });
+        if (page > currentPage) {
+          setLoadingNext(true);
+        } else {
+          setLoadingPrev(true);
+        }
+      }
     }
   };
 
@@ -55,20 +75,30 @@ export const useData = () => {
   };
 
   useEffect(() => {
-    if (!searchParams.has('page') || currentPage === 0) {
-      if (!isSearchingByQuery) {
-        setSearchParams({ page: '1' }, { replace: true });
-      } else {
-        setSearchParams({ search: searchQuery }, { replace: true });
+    if (typeof window !== 'undefined') {
+      const storedQuery = localStorage.getItem('query');
+      if (storedQuery) {
+        setQuery(storedQuery);
+        setSearchQuery(storedQuery);
       }
     }
-  }, [
-    searchParams,
-    currentPage,
-    isSearchingByQuery,
-    searchQuery,
-    setSearchParams,
-  ]);
+  }, []);
+
+  useEffect(() => {
+    if (currentPage === 0) {
+      if (!isSearchingByQuery) {
+        router.push({
+          pathname: router.pathname,
+          query: { page: '1' },
+        });
+      } else {
+        router.push({
+          pathname: router.pathname,
+          query: { search: searchQuery },
+        });
+      }
+    }
+  }, [router, currentPage, isSearchingByQuery, searchQuery]);
 
   useEffect(() => {
     dispatch(setLoading(isPlanetsListLoading || isPlanetLoading));

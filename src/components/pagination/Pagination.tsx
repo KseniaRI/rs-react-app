@@ -1,4 +1,4 @@
-import { useSearchParams } from 'react-router-dom';
+import { useRouter } from 'next/router';
 import { useAppSelector } from '../../app/hooks';
 import Button from '../button/Button';
 import styles from './Pagination.module.css';
@@ -13,8 +13,9 @@ const Pagination = ({
   loadingPrev,
   changeCurrentPage,
 }: PaginationProps) => {
-  const [searchParams] = useSearchParams();
-  const currentPage = Number(searchParams.get('page'));
+  const router = useRouter();
+  const { page } = router.query;
+  const currentPage = Number(page) || 1;
 
   const { prev, next } = useAppSelector(state => state.planets);
 
@@ -24,7 +25,7 @@ const Pagination = ({
         type="button"
         loading={loadingPrev}
         onClick={() => changeCurrentPage(currentPage - 1)}
-        disabled={!prev}
+        disabled={!prev || loadingPrev}
       >
         Back
       </Button>
@@ -33,7 +34,7 @@ const Pagination = ({
         type="button"
         loading={loadingNext}
         onClick={() => changeCurrentPage(currentPage + 1)}
-        disabled={!next}
+        disabled={!next || loadingNext}
       >
         Next
       </Button>

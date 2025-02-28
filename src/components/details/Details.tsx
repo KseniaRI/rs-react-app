@@ -1,12 +1,10 @@
-import { useOutletContext } from 'react-router-dom';
 import { useAppSelector } from '../../app/hooks';
 import { getShortDescription } from '../../utils/getShortDescription';
 import Button from '../button/Button';
 import styles from './Details.module.css';
 
-const Details = () => {
+const Details = ({ closeDetails }: { closeDetails: () => void }) => {
   const planet = useAppSelector(state => state.planets.selectedPlanet);
-  const { closeDetails } = useOutletContext<{ closeDetails: () => void }>();
 
   if (!planet) {
     return;

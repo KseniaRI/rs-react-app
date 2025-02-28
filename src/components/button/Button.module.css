@@ -18,8 +18,7 @@
 .mainButton:not(:disabled) {
   cursor: pointer;
 }
-.mainButton:not(:disabled):hover,
-.mainButton:not(:disabled):focus {
+.mainButton:not(:disabled):hover {
   background-color: lightgray;
   color: white;
   border: 1px solid white;

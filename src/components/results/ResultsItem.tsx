@@ -1,4 +1,5 @@
 import { useDispatch } from 'react-redux';
+import { useRouter } from 'next/router';
 import {
   setCheckedPlanets,
   setSelectedPlanet,
@@ -7,15 +8,10 @@ import { useAppSelector } from '../../app/hooks';
 import { Planet } from '../../types';
 import { getShortDescription } from '../../utils/getShortDescription';
 import styles from './Results.module.css';
-import { useNavigate, useSearchParams } from 'react-router-dom';
 
 const ResultsItem = ({ planet }: { planet: Planet }) => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-
-  const [searchParams] = useSearchParams();
-  const page = searchParams.get('page') ?? '1';
-  const search = searchParams.get('search') ?? '';
+  const router = useRouter();
 
   const checkedPlanets = useAppSelector(state => state.planets.checkedPlanets);
   const planets = useAppSelector(state => state.planets.planets);
@@ -36,12 +32,16 @@ const ResultsItem = ({ planet }: { planet: Planet }) => {
   };
 
   const onItemClick = (name: string) => {
-    navigate(`/planet?page=${page}&search=${search}&details=${name}`);
     const planet = planets.find(pl => pl.name === name);
+    router.push({
+      pathname: router.pathname,
+      query: { ...router.query, details: name },
+    });
     if (planet) {
       dispatch(setSelectedPlanet(planet));
     }
   };
+
   return (
     <li className={styles.resultsItem} onClick={() => onItemClick(planet.name)}>
       <div className={styles.inputWrap}>
