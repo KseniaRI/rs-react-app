@@ -1,6 +1,7 @@
+'use client';
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { useRouter } from 'next/router';
+import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { usePlanetQuery, usePlanetsListQuery } from '../features/api/apiSlice';
 import {
   setLoading,
@@ -11,9 +12,11 @@ import { extractDetails } from '../utils/extractDetails';
 
 export const useData = () => {
   const dispatch = useDispatch();
-  const router = useRouter();
-  const { page } = router.query;
 
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const page = searchParams.get('page');
   const currentPage = Number(page);
 
   const [query, setQuery] = useState<string>('');
@@ -39,15 +42,9 @@ export const useData = () => {
     setSearchQuery(query);
     localStorage.setItem('query', query);
     if (query) {
-      router.push({
-        pathname: router.pathname,
-        query: { search: query },
-      });
+      router.push(`${pathname}?search=${query}`);
     } else {
-      router.push({
-        pathname: router.pathname,
-        query: { page: '1' },
-      });
+      router.push(`${pathname}?page=1`);
     }
   };
 
@@ -57,10 +54,9 @@ export const useData = () => {
         planetsData.count / planetsData?.results.length
       );
       if (page <= maxPages) {
-        router.push({
-          pathname: router.pathname,
-          query: { ...router.query, page: page.toString() },
-        });
+        const updatedParams = new URLSearchParams(searchParams.toString());
+        updatedParams.set('page', page.toString());
+        router.push(`${pathname}?${updatedParams}`);
         if (page > currentPage) {
           setLoadingNext(true);
         } else {
@@ -87,18 +83,12 @@ export const useData = () => {
   useEffect(() => {
     if (currentPage === 0) {
       if (!isSearchingByQuery) {
-        router.push({
-          pathname: router.pathname,
-          query: { page: '1' },
-        });
+        router.push(`${pathname}?page=1`);
       } else {
-        router.push({
-          pathname: router.pathname,
-          query: { search: searchQuery },
-        });
+        router.push(`${pathname}?search=${query}`);
       }
     }
-  }, [router, currentPage, isSearchingByQuery, searchQuery]);
+  }, [currentPage, isSearchingByQuery, pathname, query, router]);
 
   useEffect(() => {
     dispatch(setLoading(isPlanetsListLoading || isPlanetLoading));

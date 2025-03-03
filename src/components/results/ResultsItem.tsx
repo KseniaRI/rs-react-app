@@ -1,5 +1,5 @@
 import { useDispatch } from 'react-redux';
-import { useRouter } from 'next/router';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
   setCheckedPlanets,
   setSelectedPlanet,
@@ -12,6 +12,8 @@ import styles from './Results.module.css';
 const ResultsItem = ({ planet }: { planet: Planet }) => {
   const dispatch = useDispatch();
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   const checkedPlanets = useAppSelector(state => state.planets.checkedPlanets);
   const planets = useAppSelector(state => state.planets.planets);
@@ -33,10 +35,7 @@ const ResultsItem = ({ planet }: { planet: Planet }) => {
 
   const onItemClick = (name: string) => {
     const planet = planets.find(pl => pl.name === name);
-    router.push({
-      pathname: router.pathname,
-      query: { ...router.query, details: name },
-    });
+    router.push(`${pathname}?${searchParams}&details=${name}`);
     if (planet) {
       dispatch(setSelectedPlanet(planet));
     }

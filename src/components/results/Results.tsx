@@ -1,4 +1,5 @@
-import { useRouter } from 'next/router';
+'use client';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import Button from '../button/Button';
 import ResultsList from './ResultsList';
 import Flyout from '../flyout/Flyout';
@@ -7,17 +8,14 @@ import styles from './Results.module.css';
 
 const Results = () => {
   const router = useRouter();
-  const { details, ...restQuery } = router.query;
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const details = searchParams.get('details');
 
   const closeDetails = () => {
-    router.push(
-      {
-        pathname: router.pathname,
-        query: restQuery,
-      },
-      undefined,
-      { shallow: true }
-    );
+    const updatedParams = new URLSearchParams(searchParams.toString());
+    updatedParams.delete('details');
+    router.push(`${pathname}?${updatedParams}`);
   };
 
   return (
