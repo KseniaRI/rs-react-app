@@ -1,6 +1,13 @@
 import '@testing-library/jest-dom';
 import { describe, test, vi, expect } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
+import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
+import {
+  ReadonlyURLSearchParams,
+  usePathname,
+  useSearchParams,
+  useRouter,
+} from 'next/navigation';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import planetsReducer, {
@@ -9,9 +16,10 @@ import planetsReducer, {
 } from '../features/api/planetsSlice';
 import { Planet } from '../types';
 import ResultsItem from '../components/results/ResultsItem';
-import { NextRouter, useRouter } from 'next/router';
 
-vi.mock('next/router', () => ({
+vi.mock('next/navigation', () => ({
+  useSearchParams: vi.fn(),
+  usePathname: vi.fn(),
   useRouter: vi.fn(),
 }));
 
@@ -67,9 +75,13 @@ describe('ResultsItem Component', () => {
     const pushMock = vi.fn();
     vi.mocked(useRouter).mockReturnValue({
       push: pushMock,
-      pathname: '/',
-      query: {},
-    } as unknown as NextRouter);
+    } as unknown as AppRouterInstance);
+
+    vi.mocked(usePathname).mockReturnValue('/');
+
+    vi.mocked(useSearchParams).mockReturnValue({
+      toString: () => '',
+    } as unknown as ReadonlyURLSearchParams);
 
     render(
       <Provider store={mockStore}>
@@ -78,10 +90,7 @@ describe('ResultsItem Component', () => {
     );
 
     fireEvent.click(screen.getByText(mockPlanet.name));
-    expect(pushMock).toHaveBeenCalledWith({
-      pathname: '/',
-      query: { details: mockPlanet.name },
-    });
+    expect(pushMock).toHaveBeenCalledWith(`/?details=${mockPlanet.name}`);
     expect(mockDispatch).toHaveBeenCalledWith(setSelectedPlanet(mockPlanet));
   });
 

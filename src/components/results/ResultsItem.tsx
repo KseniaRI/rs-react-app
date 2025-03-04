@@ -35,7 +35,9 @@ const ResultsItem = ({ planet }: { planet: Planet }) => {
 
   const onItemClick = (name: string) => {
     const planet = planets.find(pl => pl.name === name);
-    router.push(`${pathname}?${searchParams}&details=${name}`);
+    const updatedParams = new URLSearchParams(searchParams.toString());
+    updatedParams.set('details', name);
+    router.push(`${pathname}?${updatedParams}`);
     if (planet) {
       dispatch(setSelectedPlanet(planet));
     }

@@ -1,15 +1,14 @@
 import '@testing-library/jest-dom';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { ReadonlyURLSearchParams, useSearchParams } from 'next/navigation';
 import { Provider } from 'react-redux';
+import { describe, test, vi, expect } from 'vitest';
 import { configureStore } from '@reduxjs/toolkit';
 import planetsReducer from '../features/api/planetsSlice';
-import { describe, test, vi, expect } from 'vitest';
 import Pagination from '../components/pagination/Pagination';
-import { NextRouter, useRouter } from 'next/router';
 
-vi.mock('next/router', () => ({
-  useRouter: vi.fn(),
+vi.mock('next/navigation', () => ({
+  useSearchParams: vi.fn(),
 }));
 
 const mockStore = (prev: string | null, next: string | null) =>
@@ -32,20 +31,19 @@ const mockStore = (prev: string | null, next: string | null) =>
 describe('Pagination Component', () => {
   test('updates page parameter on next button click', () => {
     const changeCurrentPage = vi.fn();
-    vi.mocked(useRouter).mockReturnValue({
-      query: { page: '1' },
-    } as unknown as NextRouter);
+    vi.mocked(useSearchParams).mockReturnValue({
+      get: (key: string) => (key === 'page' ? '1' : null),
+    } as unknown as ReadonlyURLSearchParams);
+
     const store = mockStore('prevPage', 'nextPage');
 
     render(
       <Provider store={store}>
-        <MemoryRouter>
-          <Pagination
-            loadingNext={false}
-            loadingPrev={false}
-            changeCurrentPage={changeCurrentPage}
-          />
-        </MemoryRouter>
+        <Pagination
+          loadingNext={false}
+          loadingPrev={false}
+          changeCurrentPage={changeCurrentPage}
+        />
       </Provider>
     );
 
@@ -55,20 +53,18 @@ describe('Pagination Component', () => {
 
   test('updates page parameter on back button click', () => {
     const changeCurrentPage = vi.fn();
-    vi.mocked(useRouter).mockReturnValue({
-      query: { page: '2' },
-    } as unknown as NextRouter);
+    vi.mocked(useSearchParams).mockReturnValue({
+      get: (key: string) => (key === 'page' ? '2' : null),
+    } as unknown as ReadonlyURLSearchParams);
     const store = mockStore('prevPage', 'nextPage');
 
     render(
       <Provider store={store}>
-        <MemoryRouter>
-          <Pagination
-            loadingNext={false}
-            loadingPrev={false}
-            changeCurrentPage={changeCurrentPage}
-          />
-        </MemoryRouter>
+        <Pagination
+          loadingNext={false}
+          loadingPrev={false}
+          changeCurrentPage={changeCurrentPage}
+        />
       </Provider>
     );
 
@@ -78,20 +74,18 @@ describe('Pagination Component', () => {
 
   test('disables back button on first page', () => {
     const changeCurrentPage = vi.fn();
-    vi.mocked(useRouter).mockReturnValue({
-      query: { page: '1' },
-    } as unknown as NextRouter);
+    vi.mocked(useSearchParams).mockReturnValue({
+      get: (key: string) => (key === 'page' ? '1' : null),
+    } as unknown as ReadonlyURLSearchParams);
     const store = mockStore(null, 'nextPage');
 
     render(
       <Provider store={store}>
-        <MemoryRouter>
-          <Pagination
-            loadingNext={false}
-            loadingPrev={false}
-            changeCurrentPage={changeCurrentPage}
-          />
-        </MemoryRouter>
+        <Pagination
+          loadingNext={false}
+          loadingPrev={false}
+          changeCurrentPage={changeCurrentPage}
+        />
       </Provider>
     );
 
@@ -100,21 +94,19 @@ describe('Pagination Component', () => {
 
   test('disables next button if no next page', () => {
     const changeCurrentPage = vi.fn();
-    vi.mocked(useRouter).mockReturnValue({
-      query: { page: '2' },
-    } as unknown as NextRouter);
+    vi.mocked(useSearchParams).mockReturnValue({
+      get: (key: string) => (key === 'page' ? '2' : null),
+    } as unknown as ReadonlyURLSearchParams);
 
     const store = mockStore('prevPage', null);
 
     render(
       <Provider store={store}>
-        <MemoryRouter>
-          <Pagination
-            loadingNext={false}
-            loadingPrev={false}
-            changeCurrentPage={changeCurrentPage}
-          />
-        </MemoryRouter>
+        <Pagination
+          loadingNext={false}
+          loadingPrev={false}
+          changeCurrentPage={changeCurrentPage}
+        />
       </Provider>
     );
 

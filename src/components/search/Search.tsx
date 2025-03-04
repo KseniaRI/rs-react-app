@@ -15,8 +15,8 @@ const Search = ({ query, onQueryChange, onSearchSubmit }: SearchProps) => {
   return (
     <>
       <h3>
-        Enter planet name or leave input empty and click Search to load planets
-        list:{' '}
+        Enter planet name to search desired planet or enter empty string and
+        click Search to load planets list:{' '}
       </h3>
       <form onSubmit={e => onSearchSubmit(e)} className={styles.searchForm}>
         <input
