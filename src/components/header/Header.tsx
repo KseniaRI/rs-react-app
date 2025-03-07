@@ -1,4 +1,3 @@
-'use client';
 import { useTheme, useThemeUpdate } from '../../ThemeContext';
 import Button from '../button/Button';
 import styles from './Header.module.css';

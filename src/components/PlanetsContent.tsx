@@ -1,5 +1,3 @@
-'use client';
-
 import { useAppSelector } from '../app/hooks';
 import { useData } from '../hooks/useData';
 import { useError } from '../hooks/useError';

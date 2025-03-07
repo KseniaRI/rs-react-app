@@ -1,21 +1,19 @@
-'use client';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useNavigate, useSearchParams } from 'react-router';
 import Button from '../button/Button';
 import ResultsList from './ResultsList';
 import Flyout from '../flyout/Flyout';
-import Details from '../details/Details';
 import styles from './Results.module.css';
+import { Outlet } from 'react-router';
 
 const Results = () => {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const details = searchParams.get('details');
 
   const closeDetails = () => {
     const updatedParams = new URLSearchParams(searchParams.toString());
     updatedParams.delete('details');
-    router.push(`${pathname}?${updatedParams}`);
+    navigate(`/?${updatedParams}`);
   };
 
   return (
@@ -35,7 +33,8 @@ const Results = () => {
         )}
         <Flyout />
       </div>
-      {details && <Details closeDetails={closeDetails} />}
+
+      <Outlet context={{ closeDetails }} />
     </div>
   );
 };

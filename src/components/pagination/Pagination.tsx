@@ -1,5 +1,4 @@
-'use client';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'react-router';
 import { useAppSelector } from '../../app/hooks';
 import Button from '../button/Button';
 import styles from './Pagination.module.css';
@@ -14,8 +13,8 @@ const Pagination = ({
   loadingPrev,
   changeCurrentPage,
 }: PaginationProps) => {
-  const searchParams = useSearchParams();
-  const page = searchParams.get('page');
+  const [searchParams] = useSearchParams();
+  const page = Number(searchParams.get('page'));
   const currentPage = Number(page) || 1;
 
   const { prev, next } = useAppSelector(state => state.planets);

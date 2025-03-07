@@ -1,7 +1,7 @@
 import { useAppSelector } from '../../app/hooks';
 import Loader from '../loader/Loader';
-import styles from './Results.module.css';
 import ResultsItem from './ResultsItem';
+import styles from './Results.module.css';
 
 const ResultsList = () => {
   const planets = useAppSelector(state => state.planets.planets);
