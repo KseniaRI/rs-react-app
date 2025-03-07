@@ -9,6 +9,7 @@ import {
 import { extractDetails } from '../../src/utils/extractDetails';
 import Results from '../../src/components/results/Results';
 
+// eslint-disable-next-line react-refresh/only-export-components
 export async function loader({ request }: Route.LoaderArgs) {
   const url = new URL(request.url);
   const page = url.searchParams.get('page') || '1';

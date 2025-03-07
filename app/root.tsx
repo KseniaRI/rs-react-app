@@ -6,6 +6,7 @@ import PlanetsContent from '../src/components/PlanetsContent';
 import Header from '../src/components/header/Header';
 import stylesheet from './app.css?url';
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const links: Route.LinksFunction = () => {
   return [{ rel: 'stylesheet', href: stylesheet, as: 'style' }];
 };
