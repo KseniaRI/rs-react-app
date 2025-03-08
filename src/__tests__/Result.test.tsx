@@ -1,16 +1,10 @@
 import '@testing-library/jest-dom';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, test, vi, expect } from 'vitest';
-import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
-import {
-  ReadonlyURLSearchParams,
-  usePathname,
-  useSearchParams,
-  useRouter,
-} from 'next/navigation';
+import { useSearchParams, useNavigate } from 'react-router';
+import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import planetsReducer from '../features/api/planetsSlice';
-import { Provider } from 'react-redux';
 import { Planet } from '../types';
 import Results from '../components/results/Results';
 
@@ -60,10 +54,10 @@ const store = configureStore({
   },
 });
 
-vi.mock('next/navigation', () => ({
+vi.mock('react-router', () => ({
   useSearchParams: vi.fn(),
-  usePathname: vi.fn(),
-  useRouter: vi.fn(),
+  useNavigate: vi.fn(),
+  Outlet: () => <div />,
 }));
 
 vi.mock('../components/results/ResultsList', () => ({
@@ -76,10 +70,10 @@ vi.mock('../components/flyout/Flyout', () => ({
 
 describe('Results Component', () => {
   test('renders ResultsList and Flyout', () => {
-    vi.mocked(usePathname).mockReturnValue('/');
-    vi.mocked(useSearchParams).mockReturnValue({
-      get: () => null,
-    } as unknown as ReadonlyURLSearchParams);
+    vi.mocked(useSearchParams).mockReturnValue([
+      new URLSearchParams({}),
+      vi.fn(),
+    ]);
 
     render(
       <Provider store={store}>
@@ -92,11 +86,10 @@ describe('Results Component', () => {
   });
 
   test('renders Close details button when details param is present', () => {
-    vi.mocked(useSearchParams).mockReturnValue({
-      get: (key: string) => (key === 'details' ? 'Hoth' : null),
-    } as unknown as ReadonlyURLSearchParams);
-
-    vi.mocked(usePathname).mockReturnValue('/');
+    vi.mocked(useSearchParams).mockReturnValue([
+      new URLSearchParams({ details: 'Hoth' }),
+      vi.fn(),
+    ]);
 
     render(
       <Provider store={store}>
@@ -108,18 +101,13 @@ describe('Results Component', () => {
   });
 
   test('navigates to correct URL when Close details button is clicked', () => {
-    const pushMock = vi.fn();
-    vi.mocked(useRouter).mockReturnValue({
-      push: pushMock,
-    } as unknown as AppRouterInstance);
+    const navigateMock = vi.fn();
+    vi.mocked(useNavigate).mockReturnValue(navigateMock);
 
-    vi.mocked(useSearchParams).mockReturnValue({
-      get: (key: string) => (key === 'details' ? 'Hoth' : null),
-      toString: () => 'page=1&search=hoth&details=Hoth',
-    } as unknown as ReadonlyURLSearchParams);
-
-    vi.mocked(usePathname).mockReturnValue('/');
-
+    vi.mocked(useSearchParams).mockReturnValue([
+      new URLSearchParams({ page: '1', search: 'hoth', details: 'Hoth' }),
+      vi.fn(),
+    ]);
     render(
       <Provider store={store}>
         <Results />
@@ -127,6 +115,6 @@ describe('Results Component', () => {
     );
 
     fireEvent.click(screen.getByText('Close details'));
-    expect(pushMock).toHaveBeenCalledWith('/?page=1&search=hoth');
+    expect(navigateMock).toHaveBeenCalledWith('/?page=1&search=hoth');
   });
 });

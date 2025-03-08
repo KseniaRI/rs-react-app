@@ -1,7 +1,8 @@
 import '@testing-library/jest-dom';
-import { describe, test, vi, expect } from 'vitest';
+import { describe, test, vi, expect, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { Provider } from 'react-redux';
+import { useOutletContext } from 'react-router';
 import { configureStore } from '@reduxjs/toolkit';
 import { MemoryRouter } from 'react-router-dom';
 import planetsReducer from '../features/api/planetsSlice';
@@ -35,15 +36,22 @@ const createMockStore = (selectedPlanet: Planet | null) =>
     },
   });
 
+vi.mock('react-router', () => ({
+  useOutletContext: vi.fn(),
+}));
+
 describe('Details Component', () => {
+  beforeEach(() => {
+    vi.mocked(useOutletContext).mockReturnValue({ closeDetails: vi.fn() });
+  });
   test('displays correct planet details', () => {
     const store = createMockStore(mockPlanet);
     const closeDetails = vi.fn();
-
+    vi.mocked(useOutletContext).mockReturnValue({ closeDetails });
     render(
       <Provider store={store}>
         <MemoryRouter>
-          <Details closeDetails={closeDetails} />
+          <Details />
         </MemoryRouter>
       </Provider>
     );
@@ -63,11 +71,11 @@ describe('Details Component', () => {
   test('closes the details component when the close button is clicked', () => {
     const store = createMockStore(mockPlanet);
     const closeDetails = vi.fn();
-
+    vi.mocked(useOutletContext).mockReturnValue({ closeDetails });
     render(
       <Provider store={store}>
         <MemoryRouter>
-          <Details closeDetails={closeDetails} />
+          <Details />
         </MemoryRouter>
       </Provider>
     );
@@ -79,12 +87,10 @@ describe('Details Component', () => {
   test('does not render any content when no planet is selected', () => {
     const store = createMockStore(null);
 
-    const closeDetails = vi.fn();
-
     render(
       <Provider store={store}>
         <MemoryRouter>
-          <Details closeDetails={closeDetails} />
+          <Details />
         </MemoryRouter>
       </Provider>
     );

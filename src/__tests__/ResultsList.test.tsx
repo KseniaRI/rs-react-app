@@ -1,14 +1,8 @@
 import '@testing-library/jest-dom';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import { Provider } from 'react-redux';
-import {
-  ReadonlyURLSearchParams,
-  usePathname,
-  useSearchParams,
-  useRouter,
-} from 'next/navigation';
+import { useSearchParams, useNavigate } from 'react-router';
 import { configureStore } from '@reduxjs/toolkit';
 import planetsReducer from '../features/api/planetsSlice';
 import { Planet } from '../types';
@@ -60,27 +54,22 @@ const store = configureStore({
   },
 });
 
-vi.mock('next/navigation', () => ({
+vi.mock('react-router', () => ({
   useSearchParams: vi.fn(),
-  usePathname: vi.fn(),
-  useRouter: vi.fn(),
+  useNavigate: vi.fn(),
+  useOutletContext: vi.fn(),
 }));
 
 describe('ResultsList Component', () => {
   beforeEach(() => {
     vi.resetAllMocks();
-    const pushMock = vi.fn();
-    vi.mocked(useRouter).mockReturnValue({
-      push: pushMock,
-    } as unknown as AppRouterInstance);
+    vi.mocked(useSearchParams).mockReturnValue([
+      new URLSearchParams(),
+      vi.fn(),
+    ]);
 
-    vi.mocked(usePathname).mockReturnValue('/');
-
-    vi.mocked(useSearchParams).mockReturnValue({
-      toString: () => '',
-    } as unknown as ReadonlyURLSearchParams);
+    vi.mocked(useNavigate).mockReturnValue(vi.fn());
   });
-
   describe('planets are present', () => {
     test('renders the correct number of list items', () => {
       render(
@@ -148,6 +137,12 @@ describe('ResultsList Component', () => {
     });
 
     test('does not show the loader when isLoading is false', () => {
+      vi.mock('react-router', () => ({
+        useSearchParams: vi
+          .fn()
+          .mockReturnValue([new URLSearchParams(), vi.fn()]),
+        useNavigate: vi.fn(),
+      }));
       render(
         <Provider store={store}>
           <ResultsList />

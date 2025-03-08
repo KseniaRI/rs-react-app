@@ -31,9 +31,10 @@ const mockStore = (prev: string | null, next: string | null) =>
 describe('Pagination Component', () => {
   test('updates page parameter on next button click', () => {
     const changeCurrentPage = vi.fn();
-    vi.mocked(useSearchParams).mockReturnValue({
-      get: (key: string) => (key === 'page' ? '1' : null),
-    });
+    vi.mocked(useSearchParams).mockReturnValue([
+      new URLSearchParams({ page: '1' }),
+      vi.fn(),
+    ]);
 
     const store = mockStore('prevPage', 'nextPage');
 
@@ -53,9 +54,10 @@ describe('Pagination Component', () => {
 
   test('updates page parameter on back button click', () => {
     const changeCurrentPage = vi.fn();
-    vi.mocked(useSearchParams).mockReturnValue({
-      get: (key: string) => (key === 'page' ? '2' : null),
-    } as unknown as ReadonlyURLSearchParams);
+    vi.mocked(useSearchParams).mockReturnValue([
+      new URLSearchParams({ page: '2' }),
+      vi.fn(),
+    ]);
     const store = mockStore('prevPage', 'nextPage');
 
     render(
@@ -74,9 +76,10 @@ describe('Pagination Component', () => {
 
   test('disables back button on first page', () => {
     const changeCurrentPage = vi.fn();
-    vi.mocked(useSearchParams).mockReturnValue({
-      get: (key: string) => (key === 'page' ? '1' : null),
-    } as unknown as ReadonlyURLSearchParams);
+    vi.mocked(useSearchParams).mockReturnValue([
+      new URLSearchParams({ page: '1' }),
+      vi.fn(),
+    ]);
     const store = mockStore(null, 'nextPage');
 
     render(
@@ -94,9 +97,10 @@ describe('Pagination Component', () => {
 
   test('disables next button if no next page', () => {
     const changeCurrentPage = vi.fn();
-    vi.mocked(useSearchParams).mockReturnValue({
-      get: (key: string) => (key === 'page' ? '2' : null),
-    } as unknown as ReadonlyURLSearchParams);
+    vi.mocked(useSearchParams).mockReturnValue([
+      new URLSearchParams({ page: '2' }),
+      vi.fn(),
+    ]);
 
     const store = mockStore('prevPage', null);
 
@@ -109,7 +113,6 @@ describe('Pagination Component', () => {
         />
       </Provider>
     );
-
     expect(screen.getByText(/Next/i)).toBeDisabled();
   });
 });

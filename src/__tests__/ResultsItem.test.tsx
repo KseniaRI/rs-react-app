@@ -1,13 +1,7 @@
 import '@testing-library/jest-dom';
 import { describe, test, vi, expect } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
-import {
-  ReadonlyURLSearchParams,
-  usePathname,
-  useSearchParams,
-  useRouter,
-} from 'next/navigation';
+import { useSearchParams, useNavigate } from 'react-router';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import planetsReducer, {
@@ -17,10 +11,9 @@ import planetsReducer, {
 import { Planet } from '../types';
 import ResultsItem from '../components/results/ResultsItem';
 
-vi.mock('next/navigation', () => ({
+vi.mock('react-router', () => ({
   useSearchParams: vi.fn(),
-  usePathname: vi.fn(),
-  useRouter: vi.fn(),
+  useNavigate: vi.fn(),
 }));
 
 const mockDispatch = vi.fn();
@@ -62,6 +55,12 @@ const mockStore = configureStore({
 
 describe('ResultsItem Component', () => {
   test('renders the correct item data', () => {
+    vi.mock('react-router', () => ({
+      useSearchParams: vi
+        .fn()
+        .mockReturnValue([new URLSearchParams(), vi.fn()]),
+      useNavigate: vi.fn(),
+    }));
     render(
       <Provider store={mockStore}>
         <ResultsItem planet={mockPlanet} />
@@ -72,16 +71,12 @@ describe('ResultsItem Component', () => {
   });
 
   test('clicking an item navigates to details', () => {
-    const pushMock = vi.fn();
-    vi.mocked(useRouter).mockReturnValue({
-      push: pushMock,
-    } as unknown as AppRouterInstance);
-
-    vi.mocked(usePathname).mockReturnValue('/');
-
-    vi.mocked(useSearchParams).mockReturnValue({
-      toString: () => '',
-    } as unknown as ReadonlyURLSearchParams);
+    const navigateMock = vi.fn();
+    vi.mocked(useNavigate).mockReturnValue(navigateMock);
+    vi.mocked(useSearchParams).mockReturnValue([
+      new URLSearchParams({}),
+      vi.fn(),
+    ]);
 
     render(
       <Provider store={mockStore}>
@@ -90,7 +85,9 @@ describe('ResultsItem Component', () => {
     );
 
     fireEvent.click(screen.getByText(mockPlanet.name));
-    expect(pushMock).toHaveBeenCalledWith(`/?details=${mockPlanet.name}`);
+    expect(navigateMock).toHaveBeenCalledWith(
+      `/planet?details=${mockPlanet.name}`
+    );
     expect(mockDispatch).toHaveBeenCalledWith(setSelectedPlanet(mockPlanet));
   });
 
