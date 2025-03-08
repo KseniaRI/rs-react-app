@@ -1,13 +1,13 @@
 import '@testing-library/jest-dom';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { ReadonlyURLSearchParams, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'react-router';
 import { Provider } from 'react-redux';
 import { describe, test, vi, expect } from 'vitest';
 import { configureStore } from '@reduxjs/toolkit';
 import planetsReducer from '../features/api/planetsSlice';
 import Pagination from '../components/pagination/Pagination';
 
-vi.mock('next/navigation', () => ({
+vi.mock('react-router', () => ({
   useSearchParams: vi.fn(),
 }));
 
@@ -33,7 +33,7 @@ describe('Pagination Component', () => {
     const changeCurrentPage = vi.fn();
     vi.mocked(useSearchParams).mockReturnValue({
       get: (key: string) => (key === 'page' ? '1' : null),
-    } as unknown as ReadonlyURLSearchParams);
+    });
 
     const store = mockStore('prevPage', 'nextPage');
 
