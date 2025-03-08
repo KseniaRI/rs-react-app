@@ -4,7 +4,6 @@ export interface ApiResponse {
   results: Planet[];
   count: number;
 }
-
 export interface Planet {
   climate: string;
   diameter: string;
