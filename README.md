@@ -1,4 +1,15 @@
-# React + TypeScript + Vite
+# SW Planets
+
+Application that permit to get all Star Wars planets and their details, and download them to csv file.
+
+## Run scripts:
+
+- npm install - to install dependencies
+- npm run dev - to run app on localhost
+- npm run test - to run tests
+- npm run coverage - to run tests and see tests coverage
+
+## React + TypeScript + Vite project
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
